@@ -1,0 +1,59 @@
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <title>zufallsspielplan</title>
+    <script src="Adresse hier einfügen"></script>
+</head>
+
+<body>
+
+    <div id="initialisierung-turnier-spieler">
+        <p>Spieler</p>
+        <input id="mit-namen" type="radio" name="spielerauswahl" value="mit Namen">
+        <label for="mit-namen">mit Namen</label>
+        <input id="ohne-namen" type="radio" name="spielerauswahl" value="ohne Namen">
+        <label for="ohne-namen">ohne Namen</label>
+
+        <input type="number" id="anzahl-spieler-ohne-namen" name="anzahl-spieler" placeholder="Spieleranzahl hier eintragen"/>
+        <input type="text" id="namen-spieler" name="name-spieler" placeholder="ersten Spielernamen hier eintragen" />
+    </div>
+
+    <div id="initialisierung-tunier-einstellungen">
+        <label for="team_groeße">Spieler pro Team</label>
+        <input id="team_groeße" type="number" name="team_groeße" placeholder="Anzahl hier eintragen">
+        <label for="team_anzahl">Teams pro Spielfeld</label>
+        <input id="team_anzahl" type="number" name="team_anzahl" placeholder="Anzahl hier eintragen">
+
+        <p>Zusatzeinstellungen</p>
+        <label for="leistungsspieler-anzahl">Anzahl Leistungsspieler</label>
+        <input id="leistungsspieler-anzahl" type="number" name="leistungsspieler-anzahl" placeholder="Anzahl hier eintragen">
+        <label for="spielfeld-anzahl">maximale Spielfeldanzahl</label>
+        <input id="spielfeld-anzahl" type="number" name="spielfeld-anzahl" placeholder="Anzahl hier eintragen">
+    </div>
+
+    <input id="initialisierung-speichern" type="button" name="initialisierung-speichern" value="speichern">
+
+    <hr>
+
+    <div id="spielplan">
+        <p>Spielplan / Ergebnisse</p>
+    </div>
+
+    <div id="anzeige">
+        <label for="anzeige-runde">Anzeige für Runde</label>
+        <input id="anzeige-runde" type="number" name="anzeige-runde">
+        <label for="anzeige-spielfelder">Spielfelder</label>
+        <input id="anzeige-spielfelder" type="text" name="anzeige-spielfelder" placeholder="Namen der einzelnen Spielfelder">
+
+        <input id="anzeige-naechste-runde" type="button" name="anzeige-naechste-runde" value="nächste Runde anzeigen">
+    </div>
+
+    <hr>
+
+    <div id="bestenliste">
+        <p>Bestenliste</p>
+    </div>
+</body>
+
+</html>
