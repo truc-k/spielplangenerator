@@ -11,44 +11,42 @@
 
 <body>
 
-    <div id="initialisierung-turnier-spieler">
+    <div id="initialisierung-turnier">
         <!-- Hier werden die Turniereinstellungen erstmals eingestellt und zwischengespeichert und können im Turnierverlauf auch angepasst werden. -->
-        <p>Spieler</p>
-        <input id="mit-namen" type="radio" name="spielerauswahl" onclick="spielernamenWahl()">
-        <label for="mit-namen">mit Namen</label>
-        <input id="ohne-namen" type="radio" name="spielerauswahl" onclick="spielernamenWahl()">
-        <label for="ohne-namen">ohne Namen</label>
-        <br>
-        <br>
-        <!-- Für den Fall, dass das Turnier mit Spielernamen gespielt werden soll, werden hier alle Spieler fortlaufend in eine neue Zeile / Textbox eingetragen. Zudem muss müssen hier die Leistungsspieler aus solche gekennzeichnet-->
-        <textarea id="namen-spieler" name="name-spieler"
-            placeholder="Spielernamen hier zeilenweise eintragen"></textarea>
-        <textarea id="namen-leistungspieler" name="namen-leistungspieler"
-            placeholder="Leistungsspieler hier zeilenweise eintragen"></textarea>
-        <!-- Für den Fall, dass das Turnier ohne spezifische Spielernamen gespielt werden soll, kann hier die Spieleranzahl eingetragen werden. -->
-        <input type="number" id="anzahl-spieler-ohne-namen" name="anzahl-spieler"
-            placeholder="Spieleranzahl eintragen" />
-    </div>
+        <div id="spielernamen">
+            <input id="mit-namen" type="radio" name="spielerauswahl" onclick="spielernamenWahl()">
+            <label for="mit-namen">mit Namen</label>
+            <input id="ohne-namen" type="radio" name="spielerauswahl" onclick="spielernamenWahl()">
+            <label for="ohne-namen">ohne Namen</label>
+            <br>
+            <br>
+            <!-- Für den Fall, dass das Turnier mit Spielernamen gespielt werden soll, werden hier alle Spieler fortlaufend in eine neue Zeile / Textbox eingetragen. Zudem muss müssen hier die Leistungsspieler aus solche gekennzeichnet-->
+            <textarea id="namen-spieler" name="name-spieler"
+                placeholder="Spielernamen hier zeilenweise eintragen"></textarea>
+            <textarea id="namen-leistungspieler" name="namen-leistungspieler"
+                placeholder="Leistungsspieler hier zeilenweise eintragen"></textarea>
+            <!-- Für den Fall, dass das Turnier ohne spezifische Spielernamen gespielt werden soll, kann hier die Spieleranzahl eingetragen werden. -->
+            <input type="number" id="anzahl-spieler-ohne-namen" name="anzahl-spieler"
+                placeholder="Spieleranzahl eintragen" />
+        </div>
 
-    <br>
-
-    <div id="initialisierung-tunier-einstellungen">
-        <!-- team-groeße ist für die Anzahl der Spieler pro Team. -->
-        <label for="team-groeße">Spieler pro Team</label>
-        <input id="team-groeße" type="number" name="team-groeße" placeholder="Anzahl hier eintragen">
-        <br>
-        <!-- team-anzahl ist für die Anzahl der Teams pro Spielfeld. -->
-        <label for="team-anzahl">Teams pro Spielfeld</label>
-        <input id="team-anzahl" type="number" name="team-anzahl" placeholder="Anzahl hier eintragen">
-        <br>
-
-        <!-- Die weiteren Einstellungen sind optional. -->
-        <!-- leistungsspieler-anzahl definiert die Anzahl der Spieler, die gleichmäßig auf die Teams aufgeteilt werden sollen. -->
-        <input id="leistungsspieler-anzahl" type="number" name="leistungsspieler-anzahl"
-            placeholder="Leistungsspieleranzahl">
-        <!-- spielfeld-anzahl begrenzt die Zahl der Spielfelder, falls diese nur begrenzt zur Verfügung stehen. -->
-        <label for="spielfeld-anzahl">maximale Spielfeldanzahl</label>
-        <input id="spielfeld-anzahl" type="number" name="spielfeld-anzahl" placeholder="Anzahl hier eintragen">
+        <div id="turniereinstellungen">
+            <!-- team-groeße ist für die Anzahl der Spieler pro Team. -->
+            <label for="team-groeße">Spieler pro Team</label>
+            <input id="team-groeße" type="number" name="team-groeße" placeholder="Anzahl hier eintragen">
+            <br>
+            <!-- team-anzahl ist für die Anzahl der Teams pro Spielfeld. -->
+            <label for="team-anzahl">Teams pro Spielfeld</label>
+            <input id="team-anzahl" type="number" name="team-anzahl" placeholder="Anzahl hier eintragen">
+            <br>
+            <!-- Die weiteren Einstellungen sind optional. -->
+            <!-- leistungsspieler-anzahl definiert die Anzahl der Spieler, die gleichmäßig auf die Teams aufgeteilt werden sollen. -->
+            <input id="leistungsspieler-anzahl" type="number" name="leistungsspieler-anzahl"
+                placeholder="Leistungsspieleranzahl">
+            <!-- spielfeld-anzahl begrenzt die Zahl der Spielfelder, falls diese nur begrenzt zur Verfügung stehen. -->
+            <label for="spielfeld-anzahl">maximale Spielfeldanzahl</label>
+            <input id="spielfeld-anzahl" type="number" name="spielfeld-anzahl" placeholder="Anzahl hier eintragen">
+        </div>
     </div>
 
     <input id="initialisierung-speichern" type="button" name="initialisierung-speichern" value="speichern">

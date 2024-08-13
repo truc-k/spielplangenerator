@@ -14,3 +14,13 @@
 #leistungsspieler-anzahl {
     display: none;
 }
+
+#spielernamen {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#turniereinstellungen {
+    display: inline-block;
+    vertical-align: middle;
+}
