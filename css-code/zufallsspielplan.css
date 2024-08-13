@@ -9,18 +9,9 @@
 
 #anzahl-spieler-ohne-namen {
     display: none;
+    float: left;
 }
 
 #leistungsspieler-anzahl {
     display: none;
-}
-
-#spielernamen {
-    display: inline-block;
-    vertical-align: middle;
-}
-
-#turniereinstellungen {
-    display: inline-block;
-    vertical-align: middle;
 }
