@@ -1,17 +1,20 @@
 function spielernamenWahl() {
     var auswahlMitName = document.getElementById("mit-namen");
     var auswahlOhneName = document.getElementById("ohne-namen");
-    var listeNamen = document.getElementById("namen-spieler");
+    var listeSpieler = document.getElementById("namen-spieler");
     var zahlSpieler = document.getElementById("anzahl-spieler-ohne-namen");
-    var leistungsspielerAuswahl = document.getElementById("leistungsspieler-auswahl");
+    var listeLeistungsspieler = document.getElementById("namen-leistungspieler");
+    var anzahlLeistungsspieler = document.getElementById("leistungsspieler-anzahl");
 
-    if (auswahlMitName.checked == true) {
-        listeNamen.style.display = "block";
+    if (auswahlMitName.checked == true) { //Einstellung für Turnier mit Namen
+        listeSpieler.style.display = "block";
         zahlSpieler.style.display = "none";
-        leistungsspielerAuswahl.style.display = "block";
-    } else if (auswahlOhneName.checked == true) {
-        listeNamen.style.display = "none";
+        listeLeistungsspieler.style.display = "block";
+        anzahlLeistungsspieler.style.display = "none";
+    } else if (auswahlOhneName.checked == true) { //Einstellungen für ein Turnier ohne Namen
+        listeSpieler.style.display = "none";
         zahlSpieler.style.display = "block";
-        leistungsspielerAuswahl.style.display = "none";
+        listeLeistungsspieler.style.display = "none";
+        anzahlLeistungsspieler.style.display = "block";
     }
 }

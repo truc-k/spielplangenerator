@@ -3,10 +3,14 @@
     float: left;
 }
 
-#leistungsspieler-auswahl {
+#namen-leistungspieler {
     display: none;
 }
 
 #anzahl-spieler-ohne-namen {
+    display: none;
+}
+
+#leistungsspieler-anzahl {
     display: none;
 }
