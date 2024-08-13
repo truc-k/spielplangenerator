@@ -1,5 +1,10 @@
 #namen-spieler {
     display: none;
+    float: left;
+}
+
+#leistungsspieler-auswahl {
+    display: none;
 }
 
 #anzahl-spieler-ohne-namen {
