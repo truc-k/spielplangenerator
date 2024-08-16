@@ -50,12 +50,12 @@ function initialisierungTurnier() {
     let zahlfeldAnzahlLeistungsspieler = document.getElementById("anzahl-leistungsspieler"); //Abfragefeld für Leistungsspieleranzahl
 
     //Codevariablen
-    let namenSpielerArray //Array aller "normalen" Spieler (keine Leistungsspieler)
-    let namenLeistungsspielerArray //Array aller Leistungsspieler
-    let spieleranzahl //Anzahl der Spieler des Turniers (inklusive Leistungsspieler)
-    let leistungsspieleranzahl //Anzahl der Leistungsspieler des Turniers
-    let pausenspieleranzahl //Anzahl der Pausenspieler des Turniers
-    let turniereinstellungenArray //Array für die Einstellungen des Turniers
+    let namenSpielerArray=[]; //Array aller "normalen" Spieler (keine Leistungsspieler)
+    let namenLeistungsspielerArray = []; //Array aller Leistungsspieler
+    let spieleranzahl; //Anzahl der Spieler des Turniers (inklusive Leistungsspieler)
+    let leistungsspieleranzahl; //Anzahl der Leistungsspieler des Turniers
+    let pausenspieleranzahl; //Anzahl der Pausenspieler des Turniers
+    let turniereinstellungenArray = []; //Array für die Einstellungen des Turniers
 
     //Speichern für Turnier mit Namen
     //Überprüfen, ob alle erforderlichen Angaben getätigt wurden
@@ -64,16 +64,21 @@ function initialisierungTurnier() {
         //leere Zeilen werden herausgefilert
         namenSpielerArray = textfeldNamenSpieler.value.replace(/\r\n/g, "\n").split("\n").filter(line => line);
 
-        if (textfeldNamenLeistungsspieler !== "") {
+        //Leistungsspielerbestimmung, wenn vorhanden
+        if (textfeldNamenLeistungsspieler.value !== "") {
             //wenn vorhanden, Eintrag aller Leistungsspielernamen in ein Array
             //leere Zeilen werden herausgefilert
             namenLeistungsspielerArray = textfeldNamenLeistungsspieler.value.replace(/\r\n/g, "\n").split("\n").filter(line => line);
+
+            //Leistungsspieleranzahl
+            leistungsspieleranzahl = namenLeistungsspielerArray.length;
+
+        } else {
+            leistungsspieleranzahl = 0;
         }
 
-        //Spieleranzahl ist die Anzahl der Spieler und Leistungsspieler
+        //Spieleranzahl ist die Anzahl der Spieler
         spieleranzahl = namenSpielerArray.length + namenLeistungsspielerArray.length;
-
-        leistungsspieleranzahl = namenLeistungsspielerArray.length;
 
         //Pausenspieleranzahl ist die Anzahl der Spieler, die in einer Spielrunde aufgrund der Teamgröße und -anzahl pausieren müssen
         pausenspieleranzahl = spieleranzahl % (teamgroeße * teamanzahl);
@@ -96,14 +101,57 @@ function initialisierungTurnier() {
 
         turniereinstellungenArray = [spieleranzahl, teamgroeße, teamanzahl, leistungsspieleranzahl, pausenspieleranzahl, spielfeldAnzahl];
 
-        //Eintrag aller Namen der Leistungsspieler
-        for (let i = 0; i = leistungsspieleranzahl; i++) {
-            turniereinstellungenArray.push(namenLeistungsspielerArray[i]);
+        //Eintrag aller Namen der Leistungsspieler, wenn vorhanden
+        if (textfeldNamenLeistungsspieler.value !== "") {
+            for (let i = 0; i <= leistungsspieleranzahl; i++) {
+                turniereinstellungenArray.push(namenLeistungsspielerArray[i]);
+            }
+        }
+    
+        //Eintrag aller Namen der anderen Spieler
+        for (let i = 0; i <= spieleranzahl - leistungsspieleranzahl; i++) {
+            turniereinstellungenArray.push(namenSpielerArray[i]);
         }
 
-        //Eintrag aller Namen der anderen Spieler
-        for (let i = 0; i = spieleranzahl - leistungsspieleranzahl; i++) {
-            turniereinstellungenArray.push(namenSpielerArray[i]);
+        //Übergabe des Arrays in den lokalen Speicher
+        localStorage.setItem("Turniereinstellungen", turniereinstellungenArray);
+
+        //Speichern für Turnier ohne Namen
+        //Überprüfen, ob alle erforderlichen Angaben getätigt wurden
+    } else if (auswahlOhneName.checked == true && zahlfeldAnzahlSpieler.value !== "" && teamgroeße > 0 && teamanzahl > 0) {
+
+        spieleranzahl = zahlfeldAnzahlSpieler.value;
+
+        if (zahlfeldAnzahlLeistungsspieler.value == "") {
+            leistungsspieleranzahl = 0;
+        } else {
+            leistungsspieleranzahl = zahlfeldAnzahlLeistungsspieler.value;
+        }
+
+        //Pausenspieleranzahl ist die Anzahl der Spieler, die in einer Spielrunde aufgrund der Teamgröße und -anzahl pausieren müssen
+        pausenspieleranzahl = spieleranzahl % (teamgroeße * teamanzahl);
+
+        //wenn die Spielfeldanzahl nicht festgelegt (=begrenzt) wurde, bestimmt sich diese aus der Division von Spieleranzahl abzüglich der Pausenspieler und Teamgröße und -anzahl
+        if (spielfeldAnzahl < 1) {
+            spielfeldAnzahl = (spieleranzahl - pausenspieleranzahl) / (teamgroeße * teamanzahl);
+        }
+
+        //Speichern der Turniereinstellungen in einem Array
+        /*Aufbau Einstellungsarray: [0] - Spieleranzahl
+                                    [1] - Teamgröße / Spieler pro Team
+                                    [2] - Teamanzahl / Teams pro Spielfeld
+                                    [3] - Leistungsspieleranzahl
+                                    [4] - Pausenspieleranzahl
+                                    [5] - Spielfeldanzahl
+                                    [*] - Namen aller Leistungsspieler
+                                    [*] - Namen aller (restlichen) Spieler
+        */
+
+        turniereinstellungenArray = [spieleranzahl, teamgroeße, teamanzahl, leistungsspieleranzahl, pausenspieleranzahl, spielfeldAnzahl];
+
+        //Eintrag aller Zahlen der Spieler
+        for (let i = 1; i <= spieleranzahl; i++) {
+            turniereinstellungenArray.push(i);
         }
 
         //Übergabe des Arrays in den lokalen Speicher
