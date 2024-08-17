@@ -1,5 +1,5 @@
+//Hier wird zwischen der Eingabe der Spielernamen und Spieleranzahl gewählt und entsprechend werden die Test- bzw. Zahlfelder angepasst.
 function spielernamenWahl() {
-    //Hier wird zwischen der Eingabe der Spielernamen und Spieleranzahl gewählt und entsprechend werden die Test- bzw. Zahlfelder angepasst.
 
     //Deklaration der Variablen
     //Variablen Turnier mit Spielernamen
@@ -30,8 +30,8 @@ function spielernamenWahl() {
     }
 }
 
+//Hier werden die Turniereinstellungen gespeichert, um später wieder abgerufen werden zu können.
 function initialisierungTurnier() {
-    //Hier werden die Turniereinstellungen gespeichert, um später wieder abgerufen werden zu können.
 
     //Deklaration der Variablen
     //allgemeine Variablen
@@ -50,7 +50,7 @@ function initialisierungTurnier() {
     let zahlfeldAnzahlLeistungsspieler = document.getElementById("anzahl-leistungsspieler"); //Abfragefeld für Leistungsspieleranzahl
 
     //Codevariablen
-    let namenSpielerArray=[]; //Array aller "normalen" Spieler (keine Leistungsspieler)
+    let namenSpielerArray = []; //Array aller "normalen" Spieler (keine Leistungsspieler)
     let namenLeistungsspielerArray = []; //Array aller Leistungsspieler
     let spieleranzahl; //Anzahl der Spieler des Turniers (inklusive Leistungsspieler)
     let leistungsspieleranzahl; //Anzahl der Leistungsspieler des Turniers
@@ -107,7 +107,7 @@ function initialisierungTurnier() {
                 turniereinstellungenArray.push(namenLeistungsspielerArray[i]);
             }
         }
-    
+
         //Eintrag aller Namen der anderen Spieler
         for (let i = 0; i <= spieleranzahl - leistungsspieleranzahl; i++) {
             turniereinstellungenArray.push(namenSpielerArray[i]);
@@ -162,4 +162,13 @@ function initialisierungTurnier() {
         return;
     }
 
+}
+
+//Hier werden die Spielrunden generiert und auf der Seite dargestellt.
+//Zunächst wird die Knopfaktion ausgewertet (addEventListener).
+
+document.getElementById("button-neue-runde").addEventListener("click", neueRundeGenerieren);
+
+function neueRundeGenerieren() {
+    alert("Hallo");
 }

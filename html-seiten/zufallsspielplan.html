@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>zufallsspielplan</title>
     <!-- Verknüpfung für javascript-Code -->
-    <script src="./../javascript-code/zufallsspielplan.js"></script>
+    
     <!-- Verknüpfung für CSS-Code -->
     <link rel="stylesheet" href="./../css-code/zufallsspielplan.css">
 </head>
@@ -30,7 +30,7 @@
         </div>
 
         <br>
-        
+
         <div id="spielernamen">
             <input id="mit-namen" type="radio" name="spielerauswahl" onclick="spielernamenWahl()">
             <label for="mit-namen">mit Namen</label>
@@ -40,21 +40,23 @@
             <br>
 
             <!-- Für den Fall, dass das Turnier mit Spielernamen gespielt werden soll, werden hier alle Spieler fortlaufend in eine neue Zeile / Textbox eingetragen. Es wird hier zwischen Leistungsspielern und sonstigen Spielern unterschieden. -->
-            <textarea id="namen-spieler" name="namen-spieler"
-                placeholder="Spielernamen hier zeilenweise eintragen" rows="6"></textarea>
+            <textarea id="namen-spieler" name="namen-spieler" placeholder="Spielernamen hier zeilenweise eintragen"
+                rows="6"></textarea>
             <textarea id="namen-leistungspieler" name="namen-leistungspieler"
                 placeholder="Leistungsspieler hier zeilenweise eintragen" rows="6"></textarea>
 
             <!-- Für den Fall, dass das Turnier ohne spezifische Spielernamen gespielt werden soll, kann hier die Spieleranzahl und die Leistungsspieleranzahl (optional) eingetragen werden. -->
             <input type="number" id="anzahl-spieler-ohne-namen" name="anzahl-spieler"
                 placeholder="Spieleranzahl eintragen" />
-            <input type="number" id="anzahl-leistungsspieler" name="anzahl-leistungsspieler" placeholder="Leistungsspieleranzahl" />
+            <input type="number" id="anzahl-leistungsspieler" name="anzahl-leistungsspieler"
+                placeholder="Leistungsspieleranzahl" />
 
         </div>
 
         <br>
-        
-        <input id="initialisierung-speichern" type="button" name="initialisierung-speichern" value="speichern" onclick="initialisierungTurnier()">
+
+        <input id="initialisierung-speichern" type="button" name="initialisierung-speichern" value="speichern"
+            onclick="initialisierungTurnier()">
     </div>
 
     <hr>
@@ -62,6 +64,8 @@
     <div id="spielplan">
         <!-- Hier kann der Spielplan eingesehen und erweitert werden. Zudem werden hier die Ergebnisse eingetragen. -->
         <p>Spielplan / Ergebnisse</p>
+        <div id="spielrunden"></div>
+        <button id="button-neue-runde">neue Runde generieren</button>
     </div>
 
     <div id="anzeige">
@@ -81,6 +85,8 @@
         <!-- Hier werden die Spieler nach ihren Ergebnissen entsprechend geranked. -->
         <p>Bestenliste</p>
     </div>
+
+    <script type="text/javascript" src="./../javascript-code/zufallsspielplan.js"></script>
 </body>
 
 </html>
