@@ -103,7 +103,7 @@ function initialisierungTurnier() {
 
         //Eintrag aller Namen der Leistungsspieler, wenn vorhanden
         if (textfeldNamenLeistungsspieler.value !== "") {
-            for (let i = 0; i <= leistungsspieleranzahl; i++) {
+            for (let i = 0; i <= leistungsspieleranzahl - 1; i++) { //-1 bei leistungsspieleranzahl notwendig, da Array mit Zählung bei 0 beginnt
                 turniereinstellungenArray.push(namenLeistungsspielerArray[i]);
             }
         }
@@ -168,7 +168,20 @@ function initialisierungTurnier() {
 //Zunächst wird die Knopfaktion ausgewertet (addEventListener).
 
 document.getElementById("button-neue-runde").addEventListener("click", neueRundeGenerieren);
-
+//Hier wird eine neue Spielrunde generiert.
 function neueRundeGenerieren() {
-    alert("Hallo");
+    //Variablen
+    let runde //Zahl der zu erstellende Runde
+
+    //Es wird überprüft, ob der local Storage bereits einen Rundenzähler hat, wenn nicht wird dieser erstellt und die zu erstellende Runde wird definiert ("runde").
+    if (!localStorage.getItem("rundenzähler")) {
+        //Wenn der "rundenzähler" nicht vorhanden ist, wird dieser mit Runde erstellt und "runde" wird definiert.
+        localStorage.setItem("rundenzähler", 1);
+        runde = 1;
+    } else {
+        //Wenn der "rundenzähler" vorhanden ist, wird die aktuelle Rundenzahl abgerufen und mit eins addiert.
+        runde = Number(localStorage.getItem("rundenzähler")) + 1;
+    }
+
+    alert(runde);
 }
