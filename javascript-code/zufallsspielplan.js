@@ -109,12 +109,12 @@ function initialisierungTurnier() {
         }
 
         //Eintrag aller Namen der anderen Spieler
-        for (let i = 0; i <= spieleranzahl - leistungsspieleranzahl; i++) {
+        for (let i = 0; i <= spieleranzahl - leistungsspieleranzahl - 1; i++) {
             turniereinstellungenArray.push(namenSpielerArray[i]);
         }
 
         //Übergabe des Arrays in den lokalen Speicher
-        localStorage.setItem("Turniereinstellungen", turniereinstellungenArray);
+        localStorage.setItem("turniereinstellungen", JSON.stringify(turniereinstellungenArray));
 
         //Speichern für Turnier ohne Namen
         //Überprüfen, ob alle erforderlichen Angaben getätigt wurden
@@ -155,7 +155,7 @@ function initialisierungTurnier() {
         }
 
         //Übergabe des Arrays in den lokalen Speicher
-        localStorage.setItem("Turniereinstellungen", turniereinstellungenArray);
+        localStorage.setItem("turniereinstellungen", JSON.stringify(turniereinstellungenArray));
 
     } else {
         alert("Nicht alle notwendigen Angaben wurden getätigt");
@@ -166,12 +166,25 @@ function initialisierungTurnier() {
 
 //Hier werden die Spielrunden generiert und auf der Seite dargestellt.
 //Zunächst wird die Knopfaktion ausgewertet (addEventListener).
-
 document.getElementById("button-neue-runde").addEventListener("click", neueRundeGenerieren);
+
 //Hier wird eine neue Spielrunde generiert.
 function neueRundeGenerieren() {
     //Variablen
-    let runde //Zahl der zu erstellende Runde
+    let runde; //Zahl der zu erstellende Runde
+    let turniereinstellungenArray; //Array der Turniereinstellungen aus local storage
+    let spieleranzahl; //Anzahl der SPieler des Turniers (inklusive Leistungsspieler)
+    let teamgroeße; //Teamgröße / Spieler pro Team
+    let teamanzahl; //Teamanzahl / Teams pro Spielfeld
+    let leistungsspieleranzahl; //Anzahl der Leistungsspieler
+    let pausenspieleranzahl; //Anzahl der Pausenspieler
+    let spielfeldAnzahl; //Anzahl der möglichen (maximalen) Spielfelder
+    let namenAlleSpielerArray; //Namen aller Spieler (inklusive Leistungsspieler)
+    let namenSpielerArray; //Namen aller Spieler (ohne Leistungsspieler)
+    let namenLeistungsspielerArray; //Namen aller Leistungsspieler
+    let pausenspielerArray; //Namen aller Pausenspieler
+
+    let vorherigeSpielrundeArray; //Array der vorherigen Spielrunde
 
     //Es wird überprüft, ob der local Storage bereits einen Rundenzähler hat, wenn nicht wird dieser erstellt und die zu erstellende Runde wird definiert ("runde").
     if (!localStorage.getItem("rundenzähler")) {
@@ -183,5 +196,25 @@ function neueRundeGenerieren() {
         runde = Number(localStorage.getItem("rundenzähler")) + 1;
     }
 
-    alert(runde);
+    //Speichern der Turnierdaten aus dem Turniereinstellungsarray.
+    turniereinstellungenArray = JSON.parse(localStorage.getItem("turniereinstellungen"));
+
+    spieleranzahl = turniereinstellungenArray[0];
+    teamgroeße = turniereinstellungenArray[1];
+    teamanzahl = turniereinstellungenArray[2];
+    leistungsspieleranzahl = turniereinstellungenArray[3];
+    pausenspieleranzahl = turniereinstellungenArray[4];
+    spielfeldAnzahl = turniereinstellungenArray[5];
+    namenAlleSpielerArray = turniereinstellungenArray.slice(6, turniereinstellungenArray.length);
+    namenSpielerArray = turniereinstellungenArray.slice(6 + pausenspieleranzahl, turniereinstellungenArray.length);
+    namenLeistungsspielerArray = turniereinstellungenArray.slice(6, 6 + leistungsspieleranzahl);
+
+    //Bestimmung der Pausenspieler
+    //Es werden der Reihe nach alle Spieler des Turniers als Pausenspieler deklariert.
+    if (runde = 1) {
+        //Für Runde 1
+        pausenspielerArray = namenAlleSpielerArray.slice(0, pausenspieleranzahl - 1);
+    } else {
+        //Für jede beliebige Runde wird erst der letzte Pausenspieler der vergangenen Runde bestimmt, dann im aktuellen Gesamtspielerarray gesucht und ab diesem bis zur Zahl der Pausenspieleranzahl als Pausenspieler deklariert. Wenn das Gesamtspielerarray am Ende ist, beginnt die Pausendeklarierung wieder mit dem ersten Spieler.
+    }
 }
