@@ -172,13 +172,13 @@ document.getElementById("button-neue-runde").addEventListener("click", neueRunde
 function neueRundeGenerieren() {
     //Es wird überprüft, ob der local Storage bereits einen Rundenzähler hat, wenn nicht wird dieser erstellt und die zu erstellende Runde wird definiert ("runde").
     let runde; //Zahl der zu erstellende Runde
-    if (!localStorage.getItem("rundenzähler")) {
+    if (!localStorage.getItem("rundenzaehler")) {
         //Wenn der "rundenzähler" nicht vorhanden ist, wird dieser mit Runde erstellt und "runde" wird definiert.
-        localStorage.setItem("rundenzähler", 1);
+        localStorage.setItem("rundenzaehler", 1);
         runde = 1;
     } else {
         //Wenn der "rundenzähler" vorhanden ist, wird die aktuelle Rundenzahl abgerufen und mit eins addiert.
-        runde = Number(localStorage.getItem("rundenzähler")) + 1;
+        runde = Number(localStorage.getItem("rundenzaehler")) + 1;
     }
 
     //Speichern der Turnierdaten aus dem Turniereinstellungsarray.
@@ -192,19 +192,19 @@ function neueRundeGenerieren() {
     let spielfeldAnzahl = turniereinstellungenArray[5]; //Anzahl der möglichen (maximalen) Spielfelder
 
     let namenAlleSpielerArray = turniereinstellungenArray.slice(6, turniereinstellungenArray.length); //Namen aller Spieler (inklusive Leistungsspieler)
-    let namenSpielerArray = turniereinstellungenArray.slice(6 + pausenspieleranzahl, turniereinstellungenArray.length); //Namen aller Spieler (ohne Leistungsspieler)
+    let namenSpielerArray = turniereinstellungenArray.slice(6 + leistungsspieleranzahl, turniereinstellungenArray.length); //Namen aller Spieler (ohne Leistungsspieler)
     let namenLeistungsspielerArray = turniereinstellungenArray.slice(6, 6 + leistungsspieleranzahl); //Namen aller Leistungsspieler
 
     //Die Zuordnung der Pausenspieler ist noch fehlerhaft, da ein Problem entsteht, wenn der letzte Pausenspieler der letzten Runde nicht mehr mitgespielt.
     //der folgenden Abschnitt kann vereinfacht geschrieben werden und das wird in Zukunft noch passieren
 
     //Bestimmung der Pausenspieler, wenn nötig
+    let pausenspielerArray; //Namen aller Pausenspieler
     if (pausenspieleranzahl > 0) {
         //Es werden der Reihe nach alle Spieler des Turniers als Pausenspieler deklariert.
-        let pausenspielerArray; //Namen aller Pausenspieler
         if (runde = 1) {
             //Für Runde 1
-            pausenspielerArray = namenAlleSpielerArray.splice(0, pausenspieleranzahl - 1);
+            pausenspielerArray = namenAlleSpielerArray.splice(0, pausenspieleranzahl);
         } else {
             //Für jede beliebige Runde wird erst der letzte Pausenspieler der vergangenen Runde bestimmt, dann im aktuellen Gesamtspielerarray gesucht und ab diesem bis zur Zahl der Pausenspieleranzahl als Pausenspieler deklariert. Wenn das Gesamtspielerarray am Ende ist, beginnt die Pausendeklarierung wieder mit dem ersten Spieler.
             let vorherigeSpielrundeArray = JSON.parse(localStorage.getItem("runde " + runde - 1)); //Array der vorherigen Spielrunde
@@ -212,17 +212,48 @@ function neueRundeGenerieren() {
             if (vorherigeSpielrundeArray[4] > 0) { //wenn in der vorherigen Runde Pausenspieler benannt waren, werden diese bei der Benennung der neuen Pausenspieler berücksichtigt
                 let nameLetzterPausenspieler = vorherigeSpielrundeArray[6 + vorherigeSpielrundeArray[4]]; //es wird der Name des letzten Pausenspielers aus dem Array herausgenommen
                 let naechsterPausenspielerZahl = namenAlleSpielerArray.indexOf(nameLetzterPausenspieler) + 1; //es wird der Pausenspieler im Gesamtspielerarray gesucht und die Nummer der Stelle im Array gespeichert
-                pausenspielerArray = namenAlleSpielerArray.splice(naechsterPausenspielerZahl, naechsterPausenspielerZahl + pausenspieleranzahl); //neue Pausenspieler werden aus Gesamtspielerarray herausgeholt
+                pausenspielerArray = namenAlleSpielerArray.splice(naechsterPausenspielerZahl, pausenspieleranzahl); //neue Pausenspieler werden aus Gesamtspielerarray herausgeholt
             } else { //für den Fall, dass keine Pausenspieler in der vorherigen Runde benannt waren, fängt die Benennung nun in der Liste ganz vorne an
-                pausenspielerArray = namenAlleSpielerArray.splice(0, pausenspieleranzahl - 1);
+                pausenspielerArray = namenAlleSpielerArray.splice(0, pausenspieleranzahl);
             }
         }
     } else {
         pausenspielerArray = [];
     }
 
-    
-    alert(pausenspielerArray);
+    //Nun werden aus den Einzelarrays, die für die Teamzuordnung nötig sind, die Pausenspieler entfernt.
+    for (let i = 0; i <= pausenspieleranzahl - 1; i++) {
+        if (namenSpielerArray.indexOf(pausenspielerArray[i]) > -1) {
+            namenSpielerArray.splice(namenSpielerArray.indexOf(pausenspielerArray[i]), 1);
+        } else if (namenLeistungsspielerArray.indexOf(pausenspielerArray[i]) > -1) {
+            namenLeistungsspielerArray.splice(namenLeistungsspielerArray.indexOf(pausenspielerArray[i]), 1);
+        }
+    }
+    //jetzt werden beide Spielernamenarrays gemischt
+    for (var i = namenLeistungsspielerArray.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        [namenLeistungsspielerArray[i], namenLeistungsspielerArray[j]] = [namenLeistungsspielerArray[j], namenLeistungsspielerArray[i]];
+    }
 
-    //Jetzt werden die Spieler
+    for (var i = namenSpielerArray.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        [namenSpielerArray[i], namenSpielerArray[j]] = [namenSpielerArray[j], namenSpielerArray[i]];
+    }
+
+    //Speichern der Spielrunde in einem Array
+    /*Aufbau Spielrundenarray:  [0] - Spieleranzahl
+                                [1] - Teamgröße / Spieler pro Team
+                                [2] - Teamanzahl / Teams pro Spielfeld
+                                [3] - Leistungsspieleranzahl
+                                [4] - Pausenspieleranzahl
+                                [5] - Spielfeldanzahl
+                                [*] - Namen aller Pausenspieler
+                                [*] - Namen der restlichen Spieler (zuerst Leistungs-, dann alle anderen Spieler)
+    */
+
+    //Nun wird das Spielrundenarray mit den Initialeinstellungen, den Pausenspielern und der Spielermischung erstellt.
+    let spielrunde = [spieleranzahl, teamgroeße, teamanzahl, leistungsspieleranzahl, pausenspieleranzahl, spielfeldAnzahl].concat((pausenspielerArray).concat(namenLeistungsspielerArray.concat(namenSpielerArray)));
+
+    localStorage.setItem("runde " + runde, JSON.stringify(spielrunde));
+    localStorage.setItem("rundenzaehler", runde);
 }
