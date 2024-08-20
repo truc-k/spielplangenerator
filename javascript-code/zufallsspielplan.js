@@ -170,23 +170,8 @@ document.getElementById("button-neue-runde").addEventListener("click", neueRunde
 
 //Hier wird eine neue Spielrunde generiert.
 function neueRundeGenerieren() {
-    //Variablen
-    let runde; //Zahl der zu erstellende Runde
-    let turniereinstellungenArray; //Array der Turniereinstellungen aus local storage
-    let spieleranzahl; //Anzahl der SPieler des Turniers (inklusive Leistungsspieler)
-    let teamgroeße; //Teamgröße / Spieler pro Team
-    let teamanzahl; //Teamanzahl / Teams pro Spielfeld
-    let leistungsspieleranzahl; //Anzahl der Leistungsspieler
-    let pausenspieleranzahl; //Anzahl der Pausenspieler
-    let spielfeldAnzahl; //Anzahl der möglichen (maximalen) Spielfelder
-    let namenAlleSpielerArray; //Namen aller Spieler (inklusive Leistungsspieler)
-    let namenSpielerArray; //Namen aller Spieler (ohne Leistungsspieler)
-    let namenLeistungsspielerArray; //Namen aller Leistungsspieler
-    let pausenspielerArray; //Namen aller Pausenspieler
-
-    let vorherigeSpielrundeArray; //Array der vorherigen Spielrunde
-
     //Es wird überprüft, ob der local Storage bereits einen Rundenzähler hat, wenn nicht wird dieser erstellt und die zu erstellende Runde wird definiert ("runde").
+    let runde; //Zahl der zu erstellende Runde
     if (!localStorage.getItem("rundenzähler")) {
         //Wenn der "rundenzähler" nicht vorhanden ist, wird dieser mit Runde erstellt und "runde" wird definiert.
         localStorage.setItem("rundenzähler", 1);
@@ -197,24 +182,47 @@ function neueRundeGenerieren() {
     }
 
     //Speichern der Turnierdaten aus dem Turniereinstellungsarray.
-    turniereinstellungenArray = JSON.parse(localStorage.getItem("turniereinstellungen"));
+    let turniereinstellungenArray = JSON.parse(localStorage.getItem("turniereinstellungen")); //Array der Turniereinstellungen aus local storage
 
-    spieleranzahl = turniereinstellungenArray[0];
-    teamgroeße = turniereinstellungenArray[1];
-    teamanzahl = turniereinstellungenArray[2];
-    leistungsspieleranzahl = turniereinstellungenArray[3];
-    pausenspieleranzahl = turniereinstellungenArray[4];
-    spielfeldAnzahl = turniereinstellungenArray[5];
-    namenAlleSpielerArray = turniereinstellungenArray.slice(6, turniereinstellungenArray.length);
-    namenSpielerArray = turniereinstellungenArray.slice(6 + pausenspieleranzahl, turniereinstellungenArray.length);
-    namenLeistungsspielerArray = turniereinstellungenArray.slice(6, 6 + leistungsspieleranzahl);
+    let spieleranzahl = turniereinstellungenArray[0]; //Anzahl der Spieler des Turniers (inklusive Leistungsspieler)
+    let teamgroeße = turniereinstellungenArray[1]; //Teamgröße / Spieler pro Team
+    let teamanzahl = turniereinstellungenArray[2]; //Teamanzahl / Teams pro Spielfeld
+    let leistungsspieleranzahl = turniereinstellungenArray[3]; //Anzahl der Leistungsspieler
+    let pausenspieleranzahl = turniereinstellungenArray[4]; //Anzahl der Pausenspieler
+    let spielfeldAnzahl = turniereinstellungenArray[5]; //Anzahl der möglichen (maximalen) Spielfelder
 
-    //Bestimmung der Pausenspieler
-    //Es werden der Reihe nach alle Spieler des Turniers als Pausenspieler deklariert.
-    if (runde = 1) {
-        //Für Runde 1
-        pausenspielerArray = namenAlleSpielerArray.slice(0, pausenspieleranzahl - 1);
+    let namenAlleSpielerArray = turniereinstellungenArray.slice(6, turniereinstellungenArray.length); //Namen aller Spieler (inklusive Leistungsspieler)
+    let namenSpielerArray = turniereinstellungenArray.slice(6 + pausenspieleranzahl, turniereinstellungenArray.length); //Namen aller Spieler (ohne Leistungsspieler)
+    let namenLeistungsspielerArray = turniereinstellungenArray.slice(6, 6 + leistungsspieleranzahl); //Namen aller Leistungsspieler
+
+    //Die Zuordnung der Pausenspieler ist noch fehlerhaft, da ein Problem entsteht, wenn der letzte Pausenspieler der letzten Runde nicht mehr mitgespielt.
+    //der folgenden Abschnitt kann vereinfacht geschrieben werden und das wird in Zukunft noch passieren
+
+    //Bestimmung der Pausenspieler, wenn nötig
+    if (pausenspieleranzahl > 0) {
+        //Es werden der Reihe nach alle Spieler des Turniers als Pausenspieler deklariert.
+        let pausenspielerArray; //Namen aller Pausenspieler
+        if (runde = 1) {
+            //Für Runde 1
+            pausenspielerArray = namenAlleSpielerArray.splice(0, pausenspieleranzahl - 1);
+        } else {
+            //Für jede beliebige Runde wird erst der letzte Pausenspieler der vergangenen Runde bestimmt, dann im aktuellen Gesamtspielerarray gesucht und ab diesem bis zur Zahl der Pausenspieleranzahl als Pausenspieler deklariert. Wenn das Gesamtspielerarray am Ende ist, beginnt die Pausendeklarierung wieder mit dem ersten Spieler.
+            let vorherigeSpielrundeArray = JSON.parse(localStorage.getItem("runde " + runde - 1)); //Array der vorherigen Spielrunde
+
+            if (vorherigeSpielrundeArray[4] > 0) { //wenn in der vorherigen Runde Pausenspieler benannt waren, werden diese bei der Benennung der neuen Pausenspieler berücksichtigt
+                let nameLetzterPausenspieler = vorherigeSpielrundeArray[6 + vorherigeSpielrundeArray[4]]; //es wird der Name des letzten Pausenspielers aus dem Array herausgenommen
+                let naechsterPausenspielerZahl = namenAlleSpielerArray.indexOf(nameLetzterPausenspieler) + 1; //es wird der Pausenspieler im Gesamtspielerarray gesucht und die Nummer der Stelle im Array gespeichert
+                pausenspielerArray = namenAlleSpielerArray.splice(naechsterPausenspielerZahl, naechsterPausenspielerZahl + pausenspieleranzahl); //neue Pausenspieler werden aus Gesamtspielerarray herausgeholt
+            } else { //für den Fall, dass keine Pausenspieler in der vorherigen Runde benannt waren, fängt die Benennung nun in der Liste ganz vorne an
+                pausenspielerArray = namenAlleSpielerArray.splice(0, pausenspieleranzahl - 1);
+            }
+        }
     } else {
-        //Für jede beliebige Runde wird erst der letzte Pausenspieler der vergangenen Runde bestimmt, dann im aktuellen Gesamtspielerarray gesucht und ab diesem bis zur Zahl der Pausenspieleranzahl als Pausenspieler deklariert. Wenn das Gesamtspielerarray am Ende ist, beginnt die Pausendeklarierung wieder mit dem ersten Spieler.
+        pausenspielerArray = [];
     }
+
+    
+    alert(pausenspielerArray);
+
+    //Jetzt werden die Spieler
 }
