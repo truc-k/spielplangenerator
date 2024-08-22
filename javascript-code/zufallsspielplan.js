@@ -202,17 +202,30 @@ function neueRundeGenerieren() {
     let pausenspielerArray; //Namen aller Pausenspieler
     if (pausenspieleranzahl > 0) {
         //Es werden der Reihe nach alle Spieler des Turniers als Pausenspieler deklariert.
-        if (runde = 1) {
+        if (runde <= 1) {
             //Für Runde 1
             pausenspielerArray = namenAlleSpielerArray.splice(0, pausenspieleranzahl);
         } else {
             //Für jede beliebige Runde wird erst der letzte Pausenspieler der vergangenen Runde bestimmt, dann im aktuellen Gesamtspielerarray gesucht und ab diesem bis zur Zahl der Pausenspieleranzahl als Pausenspieler deklariert. Wenn das Gesamtspielerarray am Ende ist, beginnt die Pausendeklarierung wieder mit dem ersten Spieler.
-            let vorherigeSpielrundeArray = JSON.parse(localStorage.getItem("runde " + runde - 1)); //Array der vorherigen Spielrunde
+            let vorherigeSpielrundeArray = JSON.parse(localStorage.getItem("runde " + (runde - 1))); //Array der vorherigen Spielrunde
 
             if (vorherigeSpielrundeArray[4] > 0) { //wenn in der vorherigen Runde Pausenspieler benannt waren, werden diese bei der Benennung der neuen Pausenspieler berücksichtigt
-                let nameLetzterPausenspieler = vorherigeSpielrundeArray[6 + vorherigeSpielrundeArray[4]]; //es wird der Name des letzten Pausenspielers aus dem Array herausgenommen
+                let nameLetzterPausenspieler = vorherigeSpielrundeArray[5 + vorherigeSpielrundeArray[4]]; //es wird der Name des letzten Pausenspielers aus dem Array herausgenommen
                 let naechsterPausenspielerZahl = namenAlleSpielerArray.indexOf(nameLetzterPausenspieler) + 1; //es wird der Pausenspieler im Gesamtspielerarray gesucht und die Nummer der Stelle im Array gespeichert
-                pausenspielerArray = namenAlleSpielerArray.splice(naechsterPausenspielerZahl, pausenspieleranzahl); //neue Pausenspieler werden aus Gesamtspielerarray herausgeholt
+
+                //Nun gibt es drei Möglichkeiten, wie die Pausenspieler bestimmt werden, abhängig von der Position des ersten Pausenspielers im Array.
+                if (naechsterPausenspielerZahl > namenAlleSpielerArray.length) {
+                    //Wenn die Zahl des ersten Pausenspielers größer ist, als die Länge des Arrays (bedeutet, der letzte Pausenspieler der vorherigen Runde war der letzte im Array), wird der erste Spieler im Gesamtarray als erster Pausenspieler festgesetzt.
+                    naechsterPausenspielerZahl = 0;
+
+                } else if (naechsterPausenspielerZahl + pausenspieleranzahl > namenAlleSpielerArray.length) {
+                    //hier wird der Fall behandelt, dass am Ende das Array kürzer ist als die benötigte Anzahl der Pausenspieler - für diesen Fall werden die letzten Spieler aus dem Array genommen und die Zählung beginnt wieder am Beginn des Arrays
+                    pausenspielerArray = (namenAlleSpielerArray.splice(naechsterPausenspielerZahl, namenAlleSpielerArray.length - naechsterPausenspielerZahl)).concat(namenAlleSpielerArray.splice(0, pausenspieleranzahl - (namenAlleSpielerArray.length - naechsterPausenspielerZahl)));
+
+                } else {
+                    //hier werden einfach die Pausenspieler aus dem Array bestimmt, da das Array / der Rest des Arrays länger ist, als die Anzahl der Pausenspieler
+                    pausenspielerArray = namenAlleSpielerArray.splice(naechsterPausenspielerZahl, pausenspieleranzahl); //neue Pausenspieler werden aus Gesamtspielerarray herausgeholt
+                }
             } else { //für den Fall, dass keine Pausenspieler in der vorherigen Runde benannt waren, fängt die Benennung nun in der Liste ganz vorne an
                 pausenspielerArray = namenAlleSpielerArray.splice(0, pausenspieleranzahl);
             }
