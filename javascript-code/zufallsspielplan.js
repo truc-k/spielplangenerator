@@ -230,8 +230,6 @@ function neueRundeGenerieren() {
                 pausenspielerArray = namenAlleSpielerArray.splice(0, pausenspieleranzahl);
             }
         }
-    } else {
-        pausenspielerArray = [];
     }
 
     //Nun werden aus den Einzelarrays, die für die Teamzuordnung nötig sind, die Pausenspieler entfernt.
@@ -265,7 +263,13 @@ function neueRundeGenerieren() {
     */
 
     //Nun wird das Spielrundenarray mit den Initialeinstellungen, den Pausenspielern und der Spielermischung erstellt.
-    let spielrunde = [spieleranzahl, teamgroeße, teamanzahl, leistungsspieleranzahl, pausenspieleranzahl, spielfeldAnzahl].concat((pausenspielerArray).concat(namenLeistungsspielerArray.concat(namenSpielerArray)));
+    let spielrunde;
+    if (pausenspieleranzahl = 0) {
+        //wenn es keine Pausenspieler gibt, wird das Pausenspielerarray nicht mit eingefügt
+        spielrunde = [spieleranzahl, teamgroeße, teamanzahl, leistungsspieleranzahl, pausenspieleranzahl, spielfeldAnzahl].concat(namenLeistungsspielerArray.concat(namenSpielerArray));
+    } else {
+        spielrunde = [spieleranzahl, teamgroeße, teamanzahl, leistungsspieleranzahl, pausenspieleranzahl, spielfeldAnzahl].concat((pausenspielerArray).concat(namenLeistungsspielerArray.concat(namenSpielerArray)));
+    }
 
     localStorage.setItem("runde " + runde, JSON.stringify(spielrunde));
     localStorage.setItem("rundenzaehler", runde);
