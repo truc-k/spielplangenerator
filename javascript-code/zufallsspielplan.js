@@ -264,13 +264,20 @@ function neueRundeGenerieren() {
 
     //Nun wird das Spielrundenarray mit den Initialeinstellungen, den Pausenspielern und der Spielermischung erstellt.
     let spielrunde;
-    if (pausenspieleranzahl = 0) {
+    if (pausenspieleranzahl < 1) {
         //wenn es keine Pausenspieler gibt, wird das Pausenspielerarray nicht mit eingefügt
         spielrunde = [spieleranzahl, teamgroeße, teamanzahl, leistungsspieleranzahl, pausenspieleranzahl, spielfeldAnzahl].concat(namenLeistungsspielerArray.concat(namenSpielerArray));
     } else {
-        spielrunde = [spieleranzahl, teamgroeße, teamanzahl, leistungsspieleranzahl, pausenspieleranzahl, spielfeldAnzahl].concat((pausenspielerArray).concat(namenLeistungsspielerArray.concat(namenSpielerArray)));
+        spielrunde = [spieleranzahl, teamgroeße, teamanzahl, leistungsspieleranzahl, pausenspieleranzahl, spielfeldAnzahl].concat(pausenspielerArray.concat(namenLeistungsspielerArray.concat(namenSpielerArray)));
     }
 
     localStorage.setItem("runde " + runde, JSON.stringify(spielrunde));
     localStorage.setItem("rundenzaehler", runde);
+
+    //Hier werden die Absätze für jede einzelne Runde auf der HTML-Seite hinzugefügt.
+    let container = document.getElementById("spielrunden");
+    let newElement = document.createElement("button");
+    newElement.id = "button-runde-" + runde;
+    newElement.innerText = "Runde " + runde;
+    container.appendChild(newElement);
 }
