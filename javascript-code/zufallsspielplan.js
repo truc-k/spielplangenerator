@@ -220,8 +220,9 @@ function neueRundeGenerieren() {
 
                 } else if (naechsterPausenspielerZahl + pausenspieleranzahl > namenAlleSpielerArray.length) {
                     //hier wird der Fall behandelt, dass am Ende das Array kürzer ist als die benötigte Anzahl der Pausenspieler - für diesen Fall werden die letzten Spieler aus dem Array genommen und die Zählung beginnt wieder am Beginn des Arrays
-                    pausenspielerArray = (namenAlleSpielerArray.splice(naechsterPausenspielerZahl, namenAlleSpielerArray.length - naechsterPausenspielerZahl)).concat(namenAlleSpielerArray.splice(0, pausenspieleranzahl - (namenAlleSpielerArray.length - naechsterPausenspielerZahl)));
-
+                    //die Zahl "namenAlleSpielerArray.length" muss als Konstante definiert werden, da zwei splice durchgeführt werden und beide den gleichen Wert für "namenAlleSpielerArray.length" brauchen
+                    let namenAlleSpielerArrayLength = namenAlleSpielerArray.length;
+                    pausenspielerArray = namenAlleSpielerArray.splice(naechsterPausenspielerZahl, namenAlleSpielerArrayLength - naechsterPausenspielerZahl).concat(namenAlleSpielerArray.splice(0, pausenspieleranzahl - namenAlleSpielerArrayLength + naechsterPausenspielerZahl));
                 } else {
                     //hier werden einfach die Pausenspieler aus dem Array bestimmt, da das Array / der Rest des Arrays länger ist, als die Anzahl der Pausenspieler
                     pausenspielerArray = namenAlleSpielerArray.splice(naechsterPausenspielerZahl, pausenspieleranzahl); //neue Pausenspieler werden aus Gesamtspielerarray herausgeholt
@@ -277,7 +278,13 @@ function neueRundeGenerieren() {
     //Hier werden die Absätze für jede einzelne Runde auf der HTML-Seite hinzugefügt.
     let container = document.getElementById("spielrunden");
     let newElement = document.createElement("button");
-    newElement.id = "button-runde-" + runde;
     newElement.innerText = "Runde " + runde;
+    newElement.id = "button-runde";
     container.appendChild(newElement);
+}
+
+document.getElementById("button-runde").addEventListener("click", rundeOeffnen);
+
+function rundeOeffnen() {
+    alert("hallo");
 }
