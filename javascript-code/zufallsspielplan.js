@@ -279,12 +279,30 @@ function neueRundeGenerieren() {
     let container = document.getElementById("spielrunden");
     let newElement = document.createElement("button");
     newElement.innerText = "Runde " + runde;
-    newElement.id = "button-runde";
+    newElement.id = "runde " + runde;
     container.appendChild(newElement);
 }
 
-document.getElementById("button-runde").addEventListener("click", rundeOeffnen);
+//Hier wird geprüft, ob ein Klick im div für die Rundenknöpfe erfolgt.
+document.getElementById("spielrunden").addEventListener("click", rundeOeffnen);
 
-function rundeOeffnen() {
-    alert("hallo");
+function rundeOeffnen(event) {
+    //da der eventlistener nur nach einem Klick im div sucht, müssen nur die Klicks beachtet werden, bei denen die ID nicht "spielrunden" (also alle IDs mit "runde X")
+    if (event.target.id === "spielrunden") { return }
+
+    //abrufen der Rundennummer und benötigten Spielrunde aus local storage
+    let runde = Number(localStorage.getItem("rundenzähler"));
+    let aufgerufeneSpielrunde = JSON.parse(localStorage.getItem(event.target.id));
+
+    //öffnen des Ergebnis- / Rundenfensters
+    let ergebnisfenster = window.open("ergebnisse-zufallsspielplan.html", "Ergebniseintragung", "popup=yes");
+
+    //Bereich, in den Teams und Ergebnisfenster eingefügt werden
+    let container = document.getElementById("ergebnisfenster");
+
+    //
+
+    let team = document.createElement("label");
+    team.innerText = 
+
 }
