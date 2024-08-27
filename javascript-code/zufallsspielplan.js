@@ -307,8 +307,8 @@ function rundeOeffnen(event) {
     if (event.target.id === "spielrunden") { return };
 
     //Variablen für beide Buttons, die für das Ergebnis speichern oder abbrechen benötigt werden
-    let ergebnisSpeichernButton = document.getElementById("ergebnisse-speichern");
-    let ergebnisAbbrechenButton = document.getElementById("ergebnisse-abbrechen");
+    let ergebnisSpeichernButton = document.getElementById("button-ergebnisse-speichern");
+    let ergebnisAbbrechenButton = document.getElementById("button-ergebnisse-abbrechen");
 
     //definieren der Sichtbarkeit des Ergebnisspeichern-Buttons 
     let ergebnisbuttonSichtbarkeit = window.getComputedStyle(ergebnisSpeichernButton);
@@ -366,6 +366,29 @@ function rundeOeffnen(event) {
     ergebnisSpeichernButton.style.display = "block";
     ergebnisAbbrechenButton.style.display = "block";
 
+}
 
+//Hier wird geprüft, ob ein Klick für den Speicher-Button im Ergebnisfenster erfolgt
+document.getElementById("button-ergebnisse-speichern").addEventListener("click", rundeErgebnisSpeichern);
+
+function rundeErgebnisSpeichern() {
+    alert("speichern");
+}
+
+//Hier wird geprüft, ob ein Klick für den Abbruch-Button im Ergebnisfenster erfolgt
+document.getElementById("button-ergebnisse-abbrechen").addEventListener("click", rundeErgebnisAbbrechen);
+
+function rundeErgebnisAbbrechen() {
+
+    //Variablen für beide Buttons, die für das Ergebnis speichern oder abbrechen benötigt werden
+    let ergebnisSpeichernButton = document.getElementById("button-ergebnisse-speichern");
+    let ergebnisAbbrechenButton = document.getElementById("button-ergebnisse-abbrechen");
+
+    //aktuell sichtbare Ergebnsifenster (Teams + Ergebnisinput) werden "gelöscht" / überschrieben
+    document.getElementById("ergebnisfenster").innerHTML = "";
+
+    //Buttons für Ergebnisverarbeitung werden nicht mehr angezeigt
+    ergebnisSpeichernButton.style.display = "none";
+    ergebnisAbbrechenButton.style.display = "none";
 
 }
