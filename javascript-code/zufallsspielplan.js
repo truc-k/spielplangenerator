@@ -310,8 +310,8 @@ function rundeOeffnen(event) {
     let ergebnisSpeichernButton = document.getElementById("ergebnisse-speichern");
     let ergebnisAbbrechenButton = document.getElementById("ergebnisse-abbrechen");
 
-    //definieren des Ergebnisspeichern-Buttons 
-    let ergebnisbuttonSichtbarkeit = window.getComputedStyle(document.getElementById("ergebnisse-speichern"));
+    //definieren der Sichtbarkeit des Ergebnisspeichern-Buttons 
+    let ergebnisbuttonSichtbarkeit = window.getComputedStyle(ergebnisSpeichernButton);
 
     //wenn die Buttons für die Ergebnisverarbeitung bereits sichtbar sind, wird bereits eine Runde angezeigt, dann wird erst die alte Runde gelöscht
     if (ergebnisbuttonSichtbarkeit.display === "block") {
