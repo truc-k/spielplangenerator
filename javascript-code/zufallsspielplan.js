@@ -1,4 +1,20 @@
 //Hier wird zwischen der Eingabe der Spielernamen und Spieleranzahl gewählt und entsprechend werden die Test- bzw. Zahlfelder angepasst.
+window.onload = function () {
+    //wenn die Seite neu geladen werden sollte, werden hier zunächst alle bereits vorhanden Runden wieder durch einfügen des zugehörigen Buttons dargestellt
+    if (localStorage.getItem("rundenzaehler")) {
+        let rundenanzahl = localStorage.getItem("rundenzaehler");
+        for (let i = 1; i <= rundenanzahl; i++) {
+
+            //Hier werden die Buttons für jede einzelne Runde auf der HTML-Seite hinzugefügt.
+            let container = document.getElementById("spielrunden");
+            let newElement = document.createElement("button");
+            newElement.innerText = "Runde " + i;
+            newElement.id = "runde " + i;
+            container.appendChild(newElement);
+        }
+    }
+}
+
 function spielernamenWahl() {
 
     //Deklaration der Variablen
@@ -275,7 +291,7 @@ function neueRundeGenerieren() {
     localStorage.setItem("runde " + runde, JSON.stringify(spielrunde));
     localStorage.setItem("rundenzaehler", runde);
 
-    //Hier werden die Absätze für jede einzelne Runde auf der HTML-Seite hinzugefügt.
+    //Hier werden die Buttons für jede einzelne Runde auf der HTML-Seite hinzugefügt.
     let container = document.getElementById("spielrunden");
     let newElement = document.createElement("button");
     newElement.innerText = "Runde " + runde;
@@ -288,21 +304,68 @@ document.getElementById("spielrunden").addEventListener("click", rundeOeffnen);
 
 function rundeOeffnen(event) {
     //da der eventlistener nur nach einem Klick im div sucht, müssen nur die Klicks beachtet werden, bei denen die ID nicht "spielrunden" (also alle IDs mit "runde X")
-    if (event.target.id === "spielrunden") { return }
+    if (event.target.id === "spielrunden") { return };
 
-    //abrufen der Rundennummer und benötigten Spielrunde aus local storage
-    let runde = Number(localStorage.getItem("rundenzähler"));
+    //Variablen für beide Buttons, die für das Ergebnis speichern oder abbrechen benötigt werden
+    let ergebnisSpeichernButton = document.getElementById("ergebnisse-speichern");
+    let ergebnisAbbrechenButton = document.getElementById("ergebnisse-abbrechen");
+
+    //definieren des Ergebnisspeichern-Buttons 
+    let ergebnisbuttonSichtbarkeit = window.getComputedStyle(document.getElementById("ergebnisse-speichern"));
+
+    //wenn die Buttons für die Ergebnisverarbeitung bereits sichtbar sind, wird bereits eine Runde angezeigt, dann wird erst die alte Runde gelöscht
+    if (ergebnisbuttonSichtbarkeit.display === "block") {
+        document.getElementById("ergebnisfenster").innerHTML = "";
+    }
+
+    //Schrift des geklickten Buttons fett machen
+    document.getElementById(event.target.id).style.fontWeight = "bold";
+
+    //abrufen der benötigten Spielrunde aus local storage
     let aufgerufeneSpielrunde = JSON.parse(localStorage.getItem(event.target.id));
 
-    //öffnen des Ergebnis- / Rundenfensters
-    let ergebnisfenster = window.open("ergebnisse-zufallsspielplan.html", "Ergebniseintragung", "popup=yes");
+    //Turniereinstellungen aus Rundenarray abrufen
+    let spieleranzahl = aufgerufeneSpielrunde[0];
+    let teamgroeße = aufgerufeneSpielrunde[1];
+    let pausenspieleranzahl = aufgerufeneSpielrunde[4];
+
+    let teamanzahl = (spieleranzahl - pausenspieleranzahl) / teamgroeße; //Anzahl der Teams für die Spielrunde
+    let teamzuordnung = aufgerufeneSpielrunde.slice(6 + pausenspieleranzahl, aufgerufeneSpielrunde.length); //Array mit allen aktiven Spielern (also ohne Pausenspieler)
 
     //Bereich, in den Teams und Ergebnisfenster eingefügt werden
     let container = document.getElementById("ergebnisfenster");
 
-    //
+    //zusammenfügen der Spieler zu Teams aus Rundenarray
+    for (let i = 0; i < teamanzahl; i++) { //Durchführen für Teamanzahl
 
-    let team = document.createElement("label");
-    team.innerText = 
+        let team; //String, der Spielernamen eines Teams beinhaltet
+        //zusammenfügen aller Spieler, die in ein Team gehören
+        for (let t = 0; t < spieleranzahl - pausenspieleranzahl; t = t + teamanzahl) {
+            if (t < 1) {
+                team = teamzuordnung[i + t];
+            } else {
+                team += ", " + teamzuordnung[i + t];
+            }
+        }
+
+        //einfügen des Labels für die Inputbox mit dem team-String
+        let spielernamenAbschnitt = document.createElement("label");
+        spielernamenAbschnitt.innerText = team;
+        spielernamenAbschnitt.for = "team" + (i + 1);
+        container.appendChild(spielernamenAbschnitt);
+
+        //einfügen der Inputbox für das Ergebnis für das Team
+        let ergebnisbox = document.createElement("input");
+        ergebnisbox.id = "team" + (i + 1);
+        ergebnisbox.type = "number";
+        ergebnisbox.placeholder = "Ergebnis Team " + (i + 1);
+        container.appendChild(ergebnisbox);
+    }
+
+    //anzeigen der Buttons, die für Ergebnisverarbeitung notwendig sind
+    ergebnisSpeichernButton.style.display = "block";
+    ergebnisAbbrechenButton.style.display = "block";
+
+
 
 }

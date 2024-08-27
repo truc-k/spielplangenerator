@@ -15,3 +15,11 @@
 #anzahl-leistungsspieler {
     display: none;
 }
+
+#ergebnisse-speichern {
+    display: none;
+}
+
+#ergebnisse-abbrechen {
+    display: none;
+}
