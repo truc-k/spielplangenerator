@@ -46,6 +46,8 @@ function spielernamenWahl() {
     }
 }
 
+document.getElementById("button-initialisierung-speichern").addEventListener("click", initialisierungTurnier);
+
 //Hier werden die Turniereinstellungen gespeichert, um später wieder abgerufen werden zu können.
 function initialisierungTurnier() {
 
