@@ -9,7 +9,7 @@ window.onload = function () {
             let container = document.getElementById("spielrunden");
             let newElement = document.createElement("button");
             newElement.innerText = "Runde " + i;
-            newElement.id = "runde " + i;
+            newElement.id = "button-runde-" + i;
             container.appendChild(newElement);
         }
     }
@@ -295,7 +295,7 @@ function neueRundeGenerieren() {
     let container = document.getElementById("spielrunden");
     let newElement = document.createElement("button");
     newElement.innerText = "Runde " + runde;
-    newElement.id = "runde " + runde;
+    newElement.id = "button-runde-" + runde;
     container.appendChild(newElement);
 }
 
@@ -319,10 +319,14 @@ function rundeOeffnen(event) {
     }
 
     //Schrift des geklickten Buttons fett machen
-    document.getElementById(event.target.id).style.fontWeight = "bold";
+    // document.getElementById(event.target.id).style.fontWeight = "bold";
+    // leider keine Möglichkeit gefunden, den bold Tag wieder zurück zu nehmen, wenn andere Button gedrückt wird
+
+    //abrufen der aktuellen Runde
+    let runde = event.target.id.toString().slice(13);
 
     //abrufen der benötigten Spielrunde aus local storage
-    let aufgerufeneSpielrunde = JSON.parse(localStorage.getItem(event.target.id));
+    let aufgerufeneSpielrunde = JSON.parse(localStorage.getItem("runde " + runde));
 
     //Turniereinstellungen aus Rundenarray abrufen
     let spieleranzahl = aufgerufeneSpielrunde[0];
@@ -334,6 +338,12 @@ function rundeOeffnen(event) {
 
     //Bereich, in den Teams und Ergebnisfenster eingefügt werden
     let container = document.getElementById("ergebnisfenster");
+
+    //einfügen der aktuellen Runde
+    let rundeZahlErgebnisfenster = document.createElement("p");
+    rundeZahlErgebnisfenster.innerText = "Runde " + runde;
+    rundeZahlErgebnisfenster.id = "ergebnis-runde-" + runde;
+    container.appendChild(rundeZahlErgebnisfenster);
 
     //zusammenfügen der Spieler zu Teams aus Rundenarray
     for (let i = 0; i < teamanzahl; i++) { //Durchführen für Teamanzahl
@@ -351,12 +361,12 @@ function rundeOeffnen(event) {
         //einfügen des Labels für die Inputbox mit dem team-String
         let spielernamenAbschnitt = document.createElement("label");
         spielernamenAbschnitt.innerText = team;
-        spielernamenAbschnitt.for = "team" + (i + 1);
+        spielernamenAbschnitt.htmlFor = "ergebnis-team-" + (i + 1);
         container.appendChild(spielernamenAbschnitt);
 
         //einfügen der Inputbox für das Ergebnis für das Team
         let ergebnisbox = document.createElement("input");
-        ergebnisbox.id = "team" + (i + 1);
+        ergebnisbox.id = "ergebnis-team-" + (i + 1);
         ergebnisbox.type = "number";
         ergebnisbox.placeholder = "Ergebnis Team " + (i + 1);
         container.appendChild(ergebnisbox);
@@ -372,7 +382,39 @@ function rundeOeffnen(event) {
 document.getElementById("button-ergebnisse-speichern").addEventListener("click", rundeErgebnisSpeichern);
 
 function rundeErgebnisSpeichern() {
-    alert("speichern");
+
+    //abrufen der aktuellen Runde
+    let runde = document.querySelector('[id^="ergebnis-runde-"]').id.slice(15);
+
+    //abrufen des Rundenarrays aus local Storage
+    let aktuelleSpielrunde = JSON.parse(localStorage.getItem("runde " + runde));
+
+    //Turniereinstellungen aus Rundenarray abrufen
+    let spieleranzahl = aktuelleSpielrunde[0];
+    let teamgroeße = aktuelleSpielrunde[1];
+    let pausenspieleranzahl = aktuelleSpielrunde[4];
+
+    let teamanzahl = (spieleranzahl - pausenspieleranzahl) / teamgroeße; //Anzahl der Teams für die Spielrunde
+
+    for (let i = 1; i <= teamanzahl; i++) {
+        let ergebnis = document.getElementById("ergebnis-team-" + i).value;
+        aktuelleSpielrunde[5 + spieleranzahl + i] = ergebnis;
+    }
+
+    //speichern der Ergebnisse im Rundenarray
+    localStorage.setItem("runde " + runde, JSON.stringify(aktuelleSpielrunde));
+
+    //schließen des Ergebnisfensters
+    //Variablen für beide Buttons, die für das Ergebnis speichern oder abbrechen benötigt werden
+    let ergebnisSpeichernButton = document.getElementById("button-ergebnisse-speichern");
+    let ergebnisAbbrechenButton = document.getElementById("button-ergebnisse-abbrechen");
+
+    //aktuell sichtbare Ergebnsifenster (Teams + Ergebnisinput) werden "gelöscht" / überschrieben
+    document.getElementById("ergebnisfenster").innerHTML = "";
+
+    //Buttons für Ergebnisverarbeitung werden nicht mehr angezeigt
+    ergebnisSpeichernButton.style.display = "none";
+    ergebnisAbbrechenButton.style.display = "none";
 }
 
 //Hier wird geprüft, ob ein Klick für den Abbruch-Button im Ergebnisfenster erfolgt
