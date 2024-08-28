@@ -223,7 +223,7 @@ function neueRundeGenerieren() {
             pausenspielerArray = namenAlleSpielerArray.splice(0, pausenspieleranzahl);
         } else {
             //Für jede beliebige Runde wird erst der letzte Pausenspieler der vergangenen Runde bestimmt, dann im aktuellen Gesamtspielerarray gesucht und ab diesem bis zur Zahl der Pausenspieleranzahl als Pausenspieler deklariert. Wenn das Gesamtspielerarray am Ende ist, beginnt die Pausendeklarierung wieder mit dem ersten Spieler.
-            let vorherigeSpielrundeArray = JSON.parse(localStorage.getItem("runde " + (runde - 1))); //Array der vorherigen Spielrunde
+            let vorherigeSpielrundeArray = JSON.parse(localStorage.getItem("runde-" + (runde - 1))); //Array der vorherigen Spielrunde
 
             if (vorherigeSpielrundeArray[4] > 0) { //wenn in der vorherigen Runde Pausenspieler benannt waren, werden diese bei der Benennung der neuen Pausenspieler berücksichtigt
                 let nameLetzterPausenspieler = vorherigeSpielrundeArray[5 + vorherigeSpielrundeArray[4]]; //es wird der Name des letzten Pausenspielers aus dem Array herausgenommen
@@ -288,7 +288,7 @@ function neueRundeGenerieren() {
         spielrunde = [spieleranzahl, teamgroeße, teamanzahl, leistungsspieleranzahl, pausenspieleranzahl, spielfeldAnzahl].concat(pausenspielerArray.concat(namenLeistungsspielerArray.concat(namenSpielerArray)));
     }
 
-    localStorage.setItem("runde " + runde, JSON.stringify(spielrunde));
+    localStorage.setItem("runde-" + runde, JSON.stringify(spielrunde));
     localStorage.setItem("rundenzaehler", runde);
 
     //Hier werden die Buttons für jede einzelne Runde auf der HTML-Seite hinzugefügt.
@@ -326,7 +326,7 @@ function rundeOeffnen(event) {
     let runde = event.target.id.toString().slice(13);
 
     //abrufen der benötigten Spielrunde aus local storage
-    let aufgerufeneSpielrunde = JSON.parse(localStorage.getItem("runde " + runde));
+    let aufgerufeneSpielrunde = JSON.parse(localStorage.getItem("runde-" + runde));
 
     //Turniereinstellungen aus Rundenarray abrufen
     let spieleranzahl = aufgerufeneSpielrunde[0];
@@ -368,7 +368,14 @@ function rundeOeffnen(event) {
         let ergebnisbox = document.createElement("input");
         ergebnisbox.id = "ergebnis-team-" + (i + 1);
         ergebnisbox.type = "number";
-        ergebnisbox.placeholder = "Ergebnis Team " + (i + 1);
+
+        //falls bereits Ergebnisse für diese Runde eingetragen wurden, werden diese jetzt angezeigt (statt des placeholders)
+        if (aufgerufeneSpielrunde[6 + spieleranzahl + i] === undefined) {
+            ergebnisbox.placeholder = "Ergebnis Team " + (i + 1);
+        } else {
+            ergebnisbox.value = aufgerufeneSpielrunde[6 + spieleranzahl + i];
+        }
+
         container.appendChild(ergebnisbox);
     }
 
@@ -387,7 +394,7 @@ function rundeErgebnisSpeichern() {
     let runde = document.querySelector('[id^="ergebnis-runde-"]').id.slice(15);
 
     //abrufen des Rundenarrays aus local Storage
-    let aktuelleSpielrunde = JSON.parse(localStorage.getItem("runde " + runde));
+    let aktuelleSpielrunde = JSON.parse(localStorage.getItem("runde-" + runde));
 
     //Turniereinstellungen aus Rundenarray abrufen
     let spieleranzahl = aktuelleSpielrunde[0];
@@ -402,7 +409,7 @@ function rundeErgebnisSpeichern() {
     }
 
     //speichern der Ergebnisse im Rundenarray
-    localStorage.setItem("runde " + runde, JSON.stringify(aktuelleSpielrunde));
+    localStorage.setItem("runde-" + runde, JSON.stringify(aktuelleSpielrunde));
 
     //schließen des Ergebnisfensters
     //Variablen für beide Buttons, die für das Ergebnis speichern oder abbrechen benötigt werden
