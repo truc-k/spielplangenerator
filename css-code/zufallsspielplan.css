@@ -1,3 +1,7 @@
+#button-initialisierung-aendern {
+    display: none;
+}
+
 #namen-spieler {
     display: none;
     float: left;
