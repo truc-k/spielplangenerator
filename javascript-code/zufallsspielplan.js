@@ -152,6 +152,7 @@ function turnierAendern() {
     //einfügen des Speicher-Buttons und Ändern-Button verschwindet
     document.getElementById("button-initialisierung-speichern").style.display = "block";
     document.getElementById("button-initialisierung-aendern").style.display = "none";
+    document.getElementById("button-neues-turnier").style.display = "block";
 }
 
 //Event-Listener für die Turnierspeicherung
@@ -188,7 +189,7 @@ function turnierSpeichern() {
 
     //wenn bereits ein Turnier im local storage ist, wird dieses abgeändert, sonst wird ein neues Turnier erstellt
     if (localStorage.getItem("turniereinstellungen")) {
-        alert("hallo");
+        alert("Es ist bereits ein Turnier vorhanden.");
     } else { //da kein Turnier gespeichert ist, kann ein neues Turnier angelegt werden
 
         //Speichern für Turnier mit Namen
