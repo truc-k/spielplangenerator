@@ -588,7 +588,7 @@ function anzeige() {
     let runde = document.getElementById("anzeige-runde").value;
     let aufgerufeneSpielrunde = JSON.parse(localStorage.getItem("runde-" + runde));
 
-    window.open("./../html-seiten/anzeige_zufallsspielplan.html", "anzeigefenster");
+    let anzeigefenster = window.open("./../html-seiten/anzeige_zufallsspielplan.html", "anzeigefenster");
 
     //Turniereinstellungen aus Rundenarray abrufen
     let spieleranzahl = aufgerufeneSpielrunde[0];
@@ -597,9 +597,6 @@ function anzeige() {
 
     let teamanzahl = (spieleranzahl - pausenspieleranzahl) / teamgroeße; //Anzahl der Teams für die Spielrunde
     let teamzuordnung = aufgerufeneSpielrunde.slice(6 + pausenspieleranzahl, aufgerufeneSpielrunde.length); //Array mit allen aktiven Spielern (also ohne Pausenspieler)
-
-    //Bereich, in den Teams und Ergebnisfenster eingefügt werden
-    let container = document.getElementById("anzeige");
 
     //einfügen der Teams in Anzeige
     for (let i = 0; i < teamanzahl; i++) { //Durchführung für Teamanzahl
@@ -612,12 +609,8 @@ function anzeige() {
                 team += ", " + teamzuordnung[i + t];
             }
         }
-
-        //einfügen des Teams auf Anzeige
-        let teamanzeige = document.createElement("p");
-        teamanzeige.id = "teamanzeige-team-" + (i + 1);
-        teamanzeige.innerText = "Team " + (i + 1) + ": " + team;
-        container.appendChild(teamanzeige);
     }
+
+
 
 }
