@@ -57,6 +57,7 @@ window.onload = function () {
         //einblenden des Buttons für eine Turnieränderung (ausblenden des Speicher-Buttons)
         document.getElementById("button-initialisierung-speichern").style.display = "none";
         document.getElementById("button-initialisierung-aendern").style.display = "block";
+        document.getElementById("button-neues-turnier").style.display = "block";
     }
 
     //wenn die Seite neu geladen werden sollte, werden hier zunächst alle bereits vorhanden Runden wieder durch einfügen des zugehörigen Buttons dargestellt
@@ -252,6 +253,11 @@ function turnierSpeichern() {
             //Übergabe des Arrays in den lokalen Speicher
             localStorage.setItem("turniereinstellungen", JSON.stringify(turniereinstellungenArray));
 
+            //einfügen des Speicher-Buttons und Ändern-Button verschwindet
+            document.getElementById("button-initialisierung-speichern").style.display = "none";
+            document.getElementById("button-initialisierung-aendern").style.display = "block";
+            document.getElementById("button-neues-turnier").style.display = "block";
+
             //Speichern für Turnier ohne Namen
             //Überprüfen, ob alle erforderlichen Angaben getätigt wurden
         } else if (auswahlOhneName.checked == true && zahlfeldAnzahlSpieler.value !== "" && teamgroeße > 0 && teamanzahl > 0) {
@@ -292,6 +298,11 @@ function turnierSpeichern() {
 
             //Übergabe des Arrays in den lokalen Speicher
             localStorage.setItem("turniereinstellungen", JSON.stringify(turniereinstellungenArray));
+
+            //einfügen des Speicher-Buttons und Ändern-Button verschwindet
+            document.getElementById("button-initialisierung-speichern").style.display = "none";
+            document.getElementById("button-initialisierung-aendern").style.display = "block";
+            document.getElementById("button-neues-turnier").style.display = "block";
 
         } else {
             alert("Nicht alle notwendigen Angaben wurden getätigt");
@@ -500,6 +511,7 @@ function rundeOeffnen(event) {
             ergebnisbox.placeholder = "Ergebnis Team " + (i + 1);
         } else {
             ergebnisbox.value = aufgerufeneSpielrunde[6 + spieleranzahl + i];
+            ergebnisbox.readOnly = true;
         }
 
         container.appendChild(ergebnisbox);
@@ -565,5 +577,47 @@ function rundeErgebnisAbbrechen() {
     //Buttons für Ergebnisverarbeitung werden nicht mehr angezeigt
     ergebnisSpeichernButton.style.display = "none";
     ergebnisAbbrechenButton.style.display = "none";
+
+}
+
+//Prüfen, ob Wert für angezeigte Runde geändert wurde
+document.getElementById("anzeige-runde").addEventListener("change", anzeige);
+
+function anzeige() {
+    //Abruf der anzuzeigenden Runde und Rundenarray
+    let runde = document.getElementById("anzeige-runde").value;
+    let aufgerufeneSpielrunde = JSON.parse(localStorage.getItem("runde-" + runde));
+
+    window.open("./../html-seiten/anzeige_zufallsspielplan.html", "anzeigefenster");
+
+    //Turniereinstellungen aus Rundenarray abrufen
+    let spieleranzahl = aufgerufeneSpielrunde[0];
+    let teamgroeße = aufgerufeneSpielrunde[1];
+    let pausenspieleranzahl = aufgerufeneSpielrunde[4];
+
+    let teamanzahl = (spieleranzahl - pausenspieleranzahl) / teamgroeße; //Anzahl der Teams für die Spielrunde
+    let teamzuordnung = aufgerufeneSpielrunde.slice(6 + pausenspieleranzahl, aufgerufeneSpielrunde.length); //Array mit allen aktiven Spielern (also ohne Pausenspieler)
+
+    //Bereich, in den Teams und Ergebnisfenster eingefügt werden
+    let container = document.getElementById("anzeige");
+
+    //einfügen der Teams in Anzeige
+    for (let i = 0; i < teamanzahl; i++) { //Durchführung für Teamanzahl
+
+        let team; //String für Spielernamen des Teams
+        for (let t = 0; t < spieleranzahl - pausenspieleranzahl; t = t + teamanzahl) {
+            if (t < 1) {
+                team = teamzuordnung[i + t];
+            } else {
+                team += ", " + teamzuordnung[i + t];
+            }
+        }
+
+        //einfügen des Teams auf Anzeige
+        let teamanzeige = document.createElement("p");
+        teamanzeige.id = "teamanzeige-team-" + (i + 1);
+        teamanzeige.innerText = "Team " + (i + 1) + ": " + team;
+        container.appendChild(teamanzeige);
+    }
 
 }
