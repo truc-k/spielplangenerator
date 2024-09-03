@@ -46,14 +46,14 @@ window.onload = function () {
                 namenSpielerArray = turniereinstellungenArray.slice(6 + leistungsspieleranzahl, turniereinstellungenArray.length);
 
                 let namenLeistungsspielerTextfeld = document.getElementById("namen-leistungsspieler");
-                namenLeistungsspielerTextfeld.value = namenLeistungsspielerArray.toString().replace(/,/g,"\n");
+                namenLeistungsspielerTextfeld.value = namenLeistungsspielerArray.toString().replace(/,/g, "\n");
                 namenLeistungsspielerTextfeld.innerHTML.readOnly = true;
             } else {
                 namenSpielerArray = turniereinstellungenArray.slice(6, turniereinstellungenArray.length);
             }
 
             let namenSpielerTextfeld = document.getElementById("namen-spieler");
-            namenSpielerTextfeld.innerHTML = namenSpielerArray.toString().replace(/,/g,"\n");
+            namenSpielerTextfeld.innerHTML = namenSpielerArray.toString().replace(/,/g, "\n");
             namenSpielerTextfeld.readOnly = true;
 
         } else {
@@ -163,7 +163,7 @@ function turnierAendern() {
 
     //Turnier mit Spielernamen
     document.getElementById("namen-spieler").readOnly = false;
-    document.getElementById("namen-leistungspieler").readOnly = false;
+    document.getElementById("namen-leistungsspieler").readOnly = false;
 
     //Turnier ohne Spielernamen
     document.getElementById("anzahl-spieler-ohne-namen").readOnly = false;
@@ -199,7 +199,7 @@ function turnierSpeichern() {
 
     //Variablen Turnier mit Spielernamen
     let textfeldNamenSpieler = document.getElementById("namen-spieler"); //Abfragefeld für Spielernamen
-    let textfeldNamenLeistungsspieler = document.getElementById("namen-leistungspieler"); //Abfragefeld für Leistungsspielernamen
+    let textfeldNamenLeistungsspieler = document.getElementById("namen-leistungsspieler"); //Abfragefeld für Leistungsspielernamen
     let namenSpielerArray = []; //Array aller "normalen" Spieler (keine Leistungsspieler)
     let namenLeistungsspielerArray = []; //Array aller Leistungsspieler
 
