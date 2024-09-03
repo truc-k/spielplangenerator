@@ -37,6 +37,25 @@ window.onload = function () {
             auswahlMitNamen.click();
             auswahlMitNamen.disabled = true;
             auswahlOhneName.disabled = true;
+
+            //Eintrag der Namen der Spieler und Leistungsspieler
+            let namenSpielerArray;
+
+            if (leistungsspieleranzahl > 0) {
+                let namenLeistungsspielerArray = turniereinstellungenArray.slice(6, 6 + leistungsspieleranzahl);
+                namenSpielerArray = turniereinstellungenArray.slice(6 + leistungsspieleranzahl, turniereinstellungenArray.length);
+
+                let namenLeistungsspielerTextfeld = document.getElementById("namen-leistungsspieler");
+                namenLeistungsspielerTextfeld.value = namenLeistungsspielerArray.toString().replace(/,/g,"\n");
+                namenLeistungsspielerTextfeld.innerHTML.readOnly = true;
+            } else {
+                namenSpielerArray = turniereinstellungenArray.slice(6, turniereinstellungenArray.length);
+            }
+
+            let namenSpielerTextfeld = document.getElementById("namen-spieler");
+            namenSpielerTextfeld.innerHTML = namenSpielerArray.toString().replace(/,/g,"\n");
+            namenSpielerTextfeld.readOnly = true;
+
         } else {
             //es sind Spielerzahlen eingetragen
             //Auswahl des Feldes für Spieleranzahleintrag und Deaktivierung beider Auswahlknöpfe
@@ -85,7 +104,7 @@ function spielernamenWahl() {
     //Variablen Turnier mit Spielernamen
     let auswahlMitName = document.getElementById("mit-namen"); //Auswahlpunkt für Turnier mit Spielernamen
     let textfeldNamenSpieler = document.getElementById("namen-spieler"); //Abfragefeld für Spielernamen
-    let textfeldNamenLeistungsspieler = document.getElementById("namen-leistungspieler"); //Abfragefeld für Leistungsspielernamen
+    let textfeldNamenLeistungsspieler = document.getElementById("namen-leistungsspieler"); //Abfragefeld für Leistungsspielernamen
 
     //Variablen Turnier ohne Spielernamen
     let auswahlOhneName = document.getElementById("ohne-namen"); //Auswahlpunkt für Turnier ohne Spielernamen
