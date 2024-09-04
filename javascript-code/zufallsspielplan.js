@@ -209,7 +209,7 @@ function turnierSpeichern() {
 
     //wenn bereits ein Turnier im local storage ist, wird dieses abgeändert, sonst wird ein neues Turnier erstellt
     if (localStorage.getItem("turniereinstellungen")) {
-        alert("Es ist bereits ein Turnier vorhanden.");
+        alert("Es ist bereits ein Turnier vorhanden. \n Überarbeitung in Gange - solange keine Änderung möglich.");
     } else { //da kein Turnier gespeichert ist, kann ein neues Turnier angelegt werden
 
         //Speichern für Turnier mit Namen
