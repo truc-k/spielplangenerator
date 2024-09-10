@@ -603,11 +603,20 @@ function rundeErgebnisAbbrechen() {
 document.getElementById("anzeige-runde").addEventListener("change", anzeige);
 
 function anzeige() {
+    alert("hallo");
     //Abruf der anzuzeigenden Runde und Rundenarray
     let runde = document.getElementById("anzeige-runde").value;
     let aufgerufeneSpielrunde = JSON.parse(localStorage.getItem("runde-" + runde));
 
     let anzeigefenster = window.open("./../html-seiten/anzeige_zufallsspielplan.html", "anzeigefenster");
+    anzeigefenster.write("<h1>Test</h1>");
+
+    let container = document.getElementById("anzeige");
+
+    let anzeigeRunde = document.createElement("p");
+    anzeigeRunde.innerText = "Runde " + runde;
+    anzeigeRunde.id = "anzeige-runde-" + runde;
+    container.appendChild(anzeigeRunde);
 
     //Turniereinstellungen aus Rundenarray abrufen
     let spieleranzahl = aufgerufeneSpielrunde[0];
