@@ -258,15 +258,19 @@ function turnierSpeichern() {
             turniereinstellungenArray = [spieleranzahl, teamgroeße, teamanzahl, leistungsspieleranzahl, pausenspieleranzahl, spielfeldAnzahl];
 
             //Eintrag aller Namen der Leistungsspieler, wenn vorhanden
+            //zusätzlich werden die Arrays für Ergebnisspeicherung der Spieler erstellt
             if (textfeldNamenLeistungsspieler.value !== "") {
                 for (let i = 0; i <= leistungsspieleranzahl - 1; i++) { //-1 bei leistungsspieleranzahl notwendig, da Array mit Zählung bei 0 beginnt
                     turniereinstellungenArray.push(namenLeistungsspielerArray[i]);
+                    localStorage.setItem(namenLeistungsspielerArray[i], JSON.stringify([0, 0, 0, 0, 0]));
                 }
             }
 
             //Eintrag aller Namen der anderen Spieler
+            //zusätzlich werden die Arrays für Ergebnisspeicherung der Spieler erstellt
             for (let i = 0; i <= spieleranzahl - leistungsspieleranzahl - 1; i++) {
                 turniereinstellungenArray.push(namenSpielerArray[i]);
+                localStorage.setItem(namenSpielerArray[i], JSON.stringify([0, 0, 0, 0, 0]));
             }
 
             //Übergabe des Arrays in den lokalen Speicher
@@ -573,7 +577,7 @@ function rundeErgebnisSpeichern() {
     let ergebnisSpeichernButton = document.getElementById("button-ergebnisse-speichern");
     let ergebnisAbbrechenButton = document.getElementById("button-ergebnisse-abbrechen");
 
-    //aktuell sichtbare Ergebnsifenster (Teams + Ergebnisinput) werden "gelöscht" / überschrieben
+    //aktuell sichtbare Ergebnisfenster (Teams + Ergebnisinput) werden "gelöscht" / überschrieben
     document.getElementById("ergebnisfenster").innerHTML = "";
 
     //Buttons für Ergebnisverarbeitung werden nicht mehr angezeigt
@@ -603,7 +607,8 @@ function rundeErgebnisAbbrechen() {
 document.getElementById("anzeige-runde").addEventListener("change", anzeige);
 
 function anzeige() {
-    alert("hallo");
+    alert("Aktuell funktioniert noch keine Anzeige");
+    return;
     //Abruf der anzuzeigenden Runde und Rundenarray
     let runde = document.getElementById("anzeige-runde").value;
     let aufgerufeneSpielrunde = JSON.parse(localStorage.getItem("runde-" + runde));
