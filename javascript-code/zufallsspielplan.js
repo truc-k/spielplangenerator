@@ -510,7 +510,7 @@ function rundeOeffnen(event) {
 
         let team; //String, der Spielernamen eines Teams beinhaltet
         //zusammenfügen aller Spieler, die in ein Team gehören
-        for (let t = 0; t < spieleranzahl - pausenspieleranzahl; t = t + teamanzahl) {
+        for (let t = 0; t < spieleranzahl - pausenspieleranzahl; t += teamanzahl) {
             if (t < 1) {
                 team = teamzuordnung[i + t];
             } else {
@@ -562,6 +562,12 @@ function rundeErgebnisSpeichern() {
     let teamgroeße = aktuelleSpielrunde[1];
     let pausenspieleranzahl = aktuelleSpielrunde[4];
 
+    //keine Speicherung, wenn Ergebnis bereits eingetragen wurde
+    if (aktuelleSpielrunde.length == 8 + spieleranzahl) {
+        alert("Diese Runde wurde bereits gespeichert.")
+        return;
+    }
+
     let teamanzahl = (spieleranzahl - pausenspieleranzahl) / teamgroeße; //Anzahl der Teams für die Spielrunde
 
     for (let i = 1; i <= teamanzahl; i++) {
@@ -571,6 +577,56 @@ function rundeErgebnisSpeichern() {
 
     //speichern der Ergebnisse im Rundenarray
     localStorage.setItem("runde-" + runde, JSON.stringify(aktuelleSpielrunde));
+
+    //Array mit allen aktiven Spielern (also ohne Pausenspieler)
+    let teamzuordnung = aktuelleSpielrunde.slice(6 + pausenspieleranzahl, aktuelleSpielrunde.length);
+
+    //Speichern der Ergebnisse für jeden Spieler
+    for (let i = 0; i < teamanzahl; i++) { //Durchführung für Anzahl der Teams
+
+        //bestimmen der Teammitglieder
+        let team = [];
+        for (let t = 0; t < spieleranzahl - pausenspieleranzahl; t += teamanzahl) {
+            team.push(teamzuordnung[i + t]);
+        }
+
+        //bestimmen des Ergebnisses des Teams und des gegnerischen Ergebnisses
+        let ergebnis;
+        let ergebnisGegner;
+        if (i % 2 == 0) {
+            ergebnis = Number(aktuelleSpielrunde[6 + spieleranzahl + i]);
+            ergebnisGegner = Number(aktuelleSpielrunde[7 + spieleranzahl + i]);
+        } else {
+            ergebnis = Number(aktuelleSpielrunde[6 + spieleranzahl + i]);
+            ergebnisGegner = Number(aktuelleSpielrunde[5 + spieleranzahl + i]);
+        }
+
+        //Berechnung der Punktedifferenz
+        let punktedifferenz = ergebnis - ergebnisGegner;
+
+        //Eintrag der individuellen Ergebnisse
+        /*Aufbau des individuellen Ergebnisarrays:  [0] - Anzahl gespielte Spiele / Spielrunden
+                                                    [1] - Anzahl Siege
+                                                    [2] - Punkte (aus gespielten Spielen des eigenen Teams)
+                                                    [3] - Punktedifferenz (aus gespielten Spielen)
+                                                    [4] - Punkte aus Ergebnisbewertung (TBC)*/
+
+
+        for (let spielerzahl = 0; spielerzahl < teamgroeße; spielerzahl++) {
+            //Abruf des Ergebnisarrays des Spielers
+            let spielerergebnis = JSON.parse(localStorage.getItem(team[spielerzahl]));
+            //Eintrag der gespielten Runde
+            spielerergebnis[0] += 1;
+            //Eintrag des Sieges, wenn Spiel gewonnen
+            if (ergebnis > ergebnisGegner) { spielerergebnis[1] += 1; }
+            //Eintrag der Punkte des Teams
+            spielerergebnis[2] += ergebnis;
+            //Eintrag der Punktedifferenz
+            spielerergebnis[3] += punktedifferenz;
+            localStorage.setItem(team[spielerzahl], JSON.stringify(spielerergebnis));
+        }
+
+    }
 
     //schließen des Ergebnisfensters
     //Variablen für beide Buttons, die für das Ergebnis speichern oder abbrechen benötigt werden
