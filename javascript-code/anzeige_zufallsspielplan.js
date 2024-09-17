@@ -32,7 +32,7 @@ window.onload = function () {
         for (let spielfeldzahl = 0; spielfeldzahl < spielfeldAnzahl; spielfeldzahl++) {
 
             let spielfeldAbschnitt = document.createElement("div");
-            spielfeldAbschnitt.id = "spielfeld-" + (spielfeldzahl + 1);
+            spielfeldAbschnitt.id = "anzeige-spielfeld-" + (spielfeldzahl + 1);
             let spielfeldName = document.createElement("p");
             spielfeldName.innerText = spielfelder[spielfeldzahl];
             spielfeldAbschnitt.appendChild(spielfeldName);
@@ -41,13 +41,13 @@ window.onload = function () {
 
                 let abschnittTeam = document.createElement("div");
                 abschnittTeam.innerText = "Team " + (spielfeldzahl * teamanzahl + teamzahl + 1);
-                abschnittTeam.id = "anzeige-team-" + (teamzahl + 1);
+                abschnittTeam.id = "anzeige-team-" + (spielfeldzahl * teamanzahl + teamzahl + 1);
 
                 //eintragen der Teammitglieder
                 for (let teammitgliedzahl = teamzahl + spielfeldzahl * teamanzahl; teammitgliedzahl < spieleranzahl - pausenspieleranzahl; teammitgliedzahl += (spieleranzahl - pausenspieleranzahl) / teamgroeße) {
                     let teammitglied = document.createElement("p");
                     teammitglied.innerText = teamzuordnung[teammitgliedzahl];
-                    teammitglied.id = "teammitglied-" + (teammitgliedzahl) + "team-" + (teamzahl + 1);
+                    teammitglied.id = "teammitglied-" + (teammitgliedzahl) + "-team-" + (teamzahl + 1);
                     abschnittTeam.appendChild(teammitglied);
                 }
 
