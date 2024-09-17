@@ -93,6 +93,10 @@ window.onload = function () {
         }
     }
 
+    //wenn Spielfelder bereits eingetragen wurden, werden diese wieder mit eingefügt
+    if (localStorage.getItem("anzeige-spielfelder")) {
+        document.getElementById("anzeige-spielfelder").value = JSON.parse(localStorage.getItem("anzeige-spielfelder")).join(" ");
+    }
 }
 
 //Event-Listener für Wahl mit oder ohne Namen
@@ -666,9 +670,29 @@ document.getElementById("anzeige-runde").addEventListener("change", anzeigefenst
 
 function anzeigefensterOeffnen() {
 
+    let spielfelder = document.getElementById("anzeige-spielfelder").value.split(" ");
+    if (spielfelder.length <= 1) {
+        alert("Bitte Spielfelder angeben.");
+        document.getElementById("anzeige-runde").value -= 1;
+        return;
+    }
+
+    localStorage.setItem("anzeige-spielfelder", JSON.stringify(spielfelder));
+
     let runde = document.getElementById("anzeige-runde").value;
 
     localStorage.setItem("anzeige", runde);
 
     let anzeigefenster = window.open("./../html-seiten/anzeige_zufallsspielplan.html", "anzeigefenster", "popup");
+}
+
+//prüfen, ob Knopf zur anzeigen der nächsten Runde gedrückt wurde
+document.getElementById("anzeige-naechste-runde").addEventListener("click", anzeigeNaechsteRunde);
+
+function anzeigeNaechsteRunde() {
+
+    let alteRunde = Number(document.getElementById("anzeige-runde").value);
+    document.getElementById("anzeige-runde").value = alteRunde + 1;
+    anzeigefensterOeffnen();
+
 }
