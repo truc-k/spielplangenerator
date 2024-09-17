@@ -29,25 +29,25 @@ window.onload = function () {
         let teamzuordnung = anzuzeigendeSpielrunde.slice(6 + pausenspieleranzahl, anzuzeigendeSpielrunde.length);
 
         //Abruf der Teams und Eintrag auf Anzeige zugeordnet auf die Spielfelder in Abhängigkeit der Teams pro Spielfeld
-        for (let s = 0; s < spielfeldAnzahl; s++) {
+        for (let spielfeldzahl = 0; spielfeldzahl < spielfeldAnzahl; spielfeldzahl++) {
 
             let spielfeldAbschnitt = document.createElement("div");
-            spielfeldAbschnitt.id = "spielfeld-" + (s + 1);
+            spielfeldAbschnitt.id = "spielfeld-" + (spielfeldzahl + 1);
             let spielfeldName = document.createElement("p");
-            spielfeldName.innerText = spielfelder[s];
+            spielfeldName.innerText = spielfelder[spielfeldzahl];
             spielfeldAbschnitt.appendChild(spielfeldName);
 
-            for (let i = 0; i < teamanzahl; i++) {
+            for (let teamzahl = 0; teamzahl < teamanzahl; teamzahl++) {
 
                 let abschnittTeam = document.createElement("div");
-                abschnittTeam.innerText = "Team " + (s * teamanzahl + i + 1);
-                abschnittTeam.id = "anzeige-team-" + (i + 1);
+                abschnittTeam.innerText = "Team " + (spielfeldzahl * teamanzahl + teamzahl + 1);
+                abschnittTeam.id = "anzeige-team-" + (teamzahl + 1);
 
                 //eintragen der Teammitglieder
-                for (let t = s * teamanzahl + i; t < spieleranzahl - pausenspieleranzahl; t += teamgroeße) {
+                for (let teammitgliedzahl = teamzahl + spielfeldzahl * teamanzahl; teammitgliedzahl < spieleranzahl - pausenspieleranzahl; teammitgliedzahl += (spieleranzahl - pausenspieleranzahl) / teamgroeße) {
                     let teammitglied = document.createElement("p");
-                    teammitglied.innerText = teamzuordnung[t];
-                    teammitglied.id = "teammitglied-" + (t) + "team-" + (i + 1);
+                    teammitglied.innerText = teamzuordnung[teammitgliedzahl];
+                    teammitglied.id = "teammitglied-" + (teammitgliedzahl) + "team-" + (teamzahl + 1);
                     abschnittTeam.appendChild(teammitglied);
                 }
 
