@@ -92,6 +92,7 @@ window.onload = function () {
             container.appendChild(newElement);
         }
     }
+
 }
 
 //Event-Listener für Wahl mit oder ohne Namen
@@ -568,7 +569,8 @@ function rundeErgebnisSpeichern() {
         return;
     }
 
-    let teamanzahl = (spieleranzahl - pausenspieleranzahl) / teamgroeße; //Anzahl der Teams für die Spielrunde
+    //Anzahl der Teams für die Spielrunde
+    let teamanzahl = (spieleranzahl - pausenspieleranzahl) / teamgroeße;
 
     for (let i = 1; i <= teamanzahl; i++) {
         let ergebnis = document.getElementById("ergebnis-team-" + i).value;
@@ -666,6 +668,7 @@ function anzeigefensterOeffnen() {
 
     let runde = document.getElementById("anzeige-runde").value;
 
+    localStorage.setItem("anzeige", runde);
+
     let anzeigefenster = window.open("./../html-seiten/anzeige_zufallsspielplan.html", "anzeigefenster", "popup");
-    alert(runde);
 }
