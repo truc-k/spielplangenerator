@@ -76,7 +76,13 @@ window.onload = function () {
         //einblenden des Buttons für eine Turnieränderung (ausblenden des Speicher-Buttons)
         document.getElementById("button-initialisierung-speichern").style.display = "none";
         document.getElementById("button-initialisierung-aendern").style.display = "block";
+
+        //Einblenden des Buttons für ein neues Turnier
         document.getElementById("button-neues-turnier").style.display = "block";
+
+        //Einblenden des Buttons für den Turnierexport (ausblenden Importbutton)
+        document.getElementById("button-turnier-export").style.display = "block";
+        document.getElementById("button-turnier-import").style.display = "none";
     }
 
     //wenn die Seite neu geladen werden sollte, werden hier zunächst alle bereits vorhanden Runden wieder durch einfügen des zugehörigen Buttons dargestellt
@@ -262,12 +268,15 @@ function turnierSpeichern() {
 
             turniereinstellungenArray = [spieleranzahl, teamgroeße, teamanzahl, leistungsspieleranzahl, pausenspieleranzahl, spielfeldAnzahl];
 
+            //erstellen einer Map zur Speicherung aller Spielerergebnisse
+            let spielerergebnisseMap = new Map();
+
             //Eintrag aller Namen der Leistungsspieler, wenn vorhanden
             //zusätzlich werden die Arrays für Ergebnisspeicherung der Spieler erstellt
             if (textfeldNamenLeistungsspieler.value !== "") {
                 for (let i = 0; i <= leistungsspieleranzahl - 1; i++) { //-1 bei leistungsspieleranzahl notwendig, da Array mit Zählung bei 0 beginnt
                     turniereinstellungenArray.push(namenLeistungsspielerArray[i]);
-                    localStorage.setItem(namenLeistungsspielerArray[i], JSON.stringify([0, 0, 0, 0, 0]));
+                    spielerergebnisseMap.set(namenLeistungsspielerArray[i], JSON.stringify([0, 0, 0, 0, 0]));
                 }
             }
 
@@ -275,8 +284,11 @@ function turnierSpeichern() {
             //zusätzlich werden die Arrays für Ergebnisspeicherung der Spieler erstellt
             for (let i = 0; i <= spieleranzahl - leistungsspieleranzahl - 1; i++) {
                 turniereinstellungenArray.push(namenSpielerArray[i]);
-                localStorage.setItem(namenSpielerArray[i], JSON.stringify([0, 0, 0, 0, 0]));
+                spielerergebnisseMap.set(namenSpielerArray[i], JSON.stringify([0, 0, 0, 0, 0]));
             }
+
+            //Speichern der Spielerergebnis-Map im local Storage
+            localStorage.spielerergebnisse = JSON.stringify(Array.from(spielerergebnisseMap.entries()));
 
             //Übergabe des Arrays in den lokalen Speicher
             localStorage.setItem("turniereinstellungen", JSON.stringify(turniereinstellungenArray));
@@ -353,14 +365,18 @@ function neueRundeGenerieren() {
     }
     //Es wird überprüft, ob der local Storage bereits einen Rundenzähler hat, wenn nicht wird dieser erstellt und die zu erstellende Runde wird definiert ("runde").
     let runde; //Zahl der zu erstellende Runde
-    if (!localStorage.getItem("rundenzaehler")) {
-        //Wenn der "rundenzähler" nicht vorhanden ist, wird dieser mit Runde erstellt und "runde" wird definiert.
-        localStorage.setItem("rundenzaehler", 1);
-        runde = 1;
+    let spielrundenMap; //Map für Spielrundenspeicherung
+
+    //Abfrage, ob bereits ein Spielrundenspeicher vorhanden ist
+    if (localStorage.spielrunden) {
+        //Spielrundenspeicher vorhanden - Abruf der vorhandenen Map
+        spielrundenMap = new Map(JSON.parse(localStorage.spielrunden));
     } else {
-        //Wenn der "rundenzähler" vorhanden ist, wird die aktuelle Rundenzahl abgerufen und mit eins addiert.
-        runde = Number(localStorage.getItem("rundenzaehler")) + 1;
+        //erstellen einer neuen Map
+        spielrundenMap = new Map();
     }
+
+    runde = Number(spielrundenMap.size) + 1;
 
     //Speichern der Turnierdaten aus dem Turniereinstellungsarray.
     let turniereinstellungenArray = JSON.parse(localStorage.getItem("turniereinstellungen")); //Array der Turniereinstellungen aus local storage
@@ -388,7 +404,7 @@ function neueRundeGenerieren() {
             pausenspielerArray = namenAlleSpielerArray.splice(0, pausenspieleranzahl);
         } else {
             //Für jede beliebige Runde wird erst der letzte Pausenspieler der vergangenen Runde bestimmt, dann im aktuellen Gesamtspielerarray gesucht und ab diesem bis zur Zahl der Pausenspieleranzahl als Pausenspieler deklariert. Wenn das Gesamtspielerarray am Ende ist, beginnt die Pausendeklarierung wieder mit dem ersten Spieler.
-            let vorherigeSpielrundeArray = JSON.parse(localStorage.getItem("runde-" + (runde - 1))); //Array der vorherigen Spielrunde
+            let vorherigeSpielrundeArray = JSON.parse(spielrundenMap.get("runde-" + (runde - 1))); //Array der vorherigen Spielrunde
 
             if (vorherigeSpielrundeArray[4] > 0) { //wenn in der vorherigen Runde Pausenspieler benannt waren, werden diese bei der Benennung der neuen Pausenspieler berücksichtigt
                 let nameLetzterPausenspieler = vorherigeSpielrundeArray[5 + vorherigeSpielrundeArray[4]]; //es wird der Name des letzten Pausenspielers aus dem Array herausgenommen
@@ -453,8 +469,11 @@ function neueRundeGenerieren() {
         spielrunde = [spieleranzahl, teamgroeße, teamanzahl, leistungsspieleranzahl, pausenspieleranzahl, spielfeldAnzahl].concat(pausenspielerArray.concat(namenLeistungsspielerArray.concat(namenSpielerArray)));
     }
 
-    localStorage.setItem("runde-" + runde, JSON.stringify(spielrunde));
-    localStorage.setItem("rundenzaehler", runde);
+    //Speichern der erstellen Spielrunde in der Map
+    spielrundenMap.set("runde-" + runde, JSON.stringify(spielrunde));
+
+    //Speichern der Map im local storage
+    localStorage.spielrunden = JSON.stringify(Array.from(spielrundenMap.entries()));
 
     //Hier werden die Buttons für jede einzelne Runde auf der HTML-Seite hinzugefügt.
     let container = document.getElementById("spielrunden");
@@ -491,7 +510,8 @@ function rundeOeffnen(event) {
     let runde = event.target.id.toString().slice(13);
 
     //abrufen der benötigten Spielrunde aus local storage
-    let aufgerufeneSpielrunde = JSON.parse(localStorage.getItem("runde-" + runde));
+    let spielrundenMap = new Map(JSON.parse(localStorage.spielrunden));
+    let aufgerufeneSpielrunde = JSON.parse(spielrundenMap.get("runde-" + runde));
 
     //Turniereinstellungen aus Rundenarray abrufen
     let spieleranzahl = aufgerufeneSpielrunde[0];
@@ -527,6 +547,7 @@ function rundeOeffnen(event) {
         let spielernamenAbschnitt = document.createElement("label");
         spielernamenAbschnitt.innerText = team;
         spielernamenAbschnitt.htmlFor = "ergebnis-team-" + (i + 1);
+        spielernamenAbschnitt.id = "label-ergebnis-team-" + (i + 1);
         container.appendChild(spielernamenAbschnitt);
 
         //einfügen der Inputbox für das Ergebnis für das Team
@@ -560,7 +581,8 @@ function rundeErgebnisSpeichern() {
     let runde = document.querySelector('[id^="ergebnis-runde-"]').id.slice(15);
 
     //abrufen des Rundenarrays aus local Storage
-    let aktuelleSpielrunde = JSON.parse(localStorage.getItem("runde-" + runde));
+    let spielrundenMap = new Map(JSON.parse(localStorage.spielrunden));
+    let aktuelleSpielrunde = JSON.parse(spielrundenMap.get("runde-" + runde));
 
     //Turniereinstellungen aus Rundenarray abrufen
     let spieleranzahl = aktuelleSpielrunde[0];
@@ -576,16 +598,20 @@ function rundeErgebnisSpeichern() {
     //Anzahl der Teams für die Spielrunde
     let teamanzahl = (spieleranzahl - pausenspieleranzahl) / teamgroeße;
 
-    for (let i = 1; i <= teamanzahl; i++) {
-        let ergebnis = document.getElementById("ergebnis-team-" + i).value;
-        aktuelleSpielrunde[5 + spieleranzahl + i] = ergebnis;
+    for (let teamzahl = 1; teamzahl <= teamanzahl; teamzahl++) {
+        let ergebnis = document.getElementById("ergebnis-team-" + teamzahl).value;
+        aktuelleSpielrunde[5 + spieleranzahl + teamzahl] = ergebnis;
     }
 
     //speichern der Ergebnisse im Rundenarray
-    localStorage.setItem("runde-" + runde, JSON.stringify(aktuelleSpielrunde));
+    spielrundenMap.set("runde-" + runde, JSON.stringify(aktuelleSpielrunde));
+    localStorage.spielrunden = JSON.stringify(Array.from(spielrundenMap.entries()));
 
     //Array mit allen aktiven Spielern (also ohne Pausenspieler)
     let teamzuordnung = aktuelleSpielrunde.slice(6 + pausenspieleranzahl, aktuelleSpielrunde.length);
+
+    //Map für Speicher der Spielerergebnisse
+    let spielerergebnisseMap = new Map(JSON.parse(localStorage.spielerergebnisse));
 
     //Speichern der Ergebnisse für jeden Spieler
     for (let i = 0; i < teamanzahl; i++) { //Durchführung für Anzahl der Teams
@@ -620,7 +646,7 @@ function rundeErgebnisSpeichern() {
 
         for (let spielerzahl = 0; spielerzahl < teamgroeße; spielerzahl++) {
             //Abruf des Ergebnisarrays des Spielers
-            let spielerergebnis = JSON.parse(localStorage.getItem(team[spielerzahl]));
+            let spielerergebnis = JSON.parse(spielerergebnisseMap.get(team[spielerzahl]));
             //Eintrag der gespielten Runde
             spielerergebnis[0] += 1;
             //Eintrag des Sieges, wenn Spiel gewonnen
@@ -629,10 +655,15 @@ function rundeErgebnisSpeichern() {
             spielerergebnis[2] += ergebnis;
             //Eintrag der Punktedifferenz
             spielerergebnis[3] += punktedifferenz;
-            localStorage.setItem(team[spielerzahl], JSON.stringify(spielerergebnis));
+
+            //Speichern des Spielerergebnisses in der Gesamtmap
+            spielerergebnisseMap.set(team[spielerzahl], JSON.stringify(spielerergebnis));
         }
 
     }
+
+    //Speichern der Spielergebnis-Map im local storage
+    localStorage.spielerergebnisse = JSON.stringify(Array.from(spielerergebnisseMap.entries()));
 
     //schließen des Ergebnisfensters
     //Variablen für beide Buttons, die für das Ergebnis speichern oder abbrechen benötigt werden
@@ -695,4 +726,18 @@ function anzeigeNaechsteRunde() {
     document.getElementById("anzeige-runde").value = alteRunde + 1;
     anzeigefensterOeffnen();
 
+}
+
+//prüfen, ob Knopf für Turnierexport gedrückt wurde
+document.getElementById("button-turnier-export").addEventListener("click", turnierExport);
+
+function turnierExport() {
+    alert("Noch nicht implementiert.")
+}
+
+//prüfen, ob Knopf für Turnierimport gedrückt wurde
+document.getElementById("button-turnier-import").addEventListener("click", turnierImport);
+
+function turnierImport() {
+    alert("Noch nicht implementiert.")
 }

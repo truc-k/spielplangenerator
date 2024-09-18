@@ -6,6 +6,10 @@
     display: none;
 }
 
+#button-turnier-export {
+    display: none;
+}
+
 #namen-spieler {
     display: none;
     float: left;
@@ -24,8 +28,17 @@
     display: none;
 }
 
+[id^="ergebnis-team-"] {
+    /* float: left; */
+}
+
+#ergebnisfenster {
+    /* padding: 2%; */
+}
+
 #button-ergebnisse-speichern {
     display: none;
+    float: left;
 }
 
 #button-ergebnisse-abbrechen {
