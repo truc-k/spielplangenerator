@@ -86,8 +86,15 @@ window.onload = function () {
     }
 
     //wenn die Seite neu geladen werden sollte, werden hier zunächst alle bereits vorhanden Runden wieder durch einfügen des zugehörigen Buttons dargestellt
-    if (localStorage.getItem("rundenzaehler")) {
-        let rundenanzahl = localStorage.getItem("rundenzaehler");
+    if (localStorage.spielrunden) {
+
+        //Abruf der Spielrundenmap aus local storage
+        spielrundenMap = new Map(JSON.parse(localStorage.spielrunden));
+
+        //Abruf der Anzahl der gespeicherten Runden
+        let rundenanzahl = Number(spielrundenMap.size);
+
+        //Hinzufügen der Buttons für jede gespeicherte Runde
         for (let i = 1; i <= rundenanzahl; i++) {
 
             //Hier werden die Buttons für jede einzelne Runde auf der HTML-Seite hinzugefügt.
@@ -342,7 +349,13 @@ function turnierSpeichern() {
             //einfügen des Speicher-Buttons und Ändern-Button verschwindet
             document.getElementById("button-initialisierung-speichern").style.display = "none";
             document.getElementById("button-initialisierung-aendern").style.display = "block";
+
+            //Button "neues Turnier" hinzufügen
             document.getElementById("button-neues-turnier").style.display = "block";
+
+            //Button "Turnier Import" auf "Turnier Export" ändern
+            document.getElementById("button-turnier-import").style.display = "none";
+            document.getElementById("button-turnier-export").style.display = "block";
 
         } else {
             alert("Nicht alle notwendigen Angaben wurden getätigt");
