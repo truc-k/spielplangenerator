@@ -245,6 +245,25 @@ function turnierSpeichern() {
         }
         spieleranzahl = namenSpielerArray.length + leistungsspieleranzahl;
 
+        //Überprüfen, ob jeder Spielername nur einmal vorkommt (sonst Fehler mit Spielerergebnisspeicher)
+        let namenAlleSpielerArray = namenLeistungsspielerArray.concat(namenSpielerArray);
+        let namenAlleSpielerArrayOhneDopplung = [];
+        let dopplungNamenAlleSpielerArray = [];
+
+        for (let spielerzahl = 0; spielerzahl < namenAlleSpielerArray.length; spielerzahl++) {
+            //Überprüfung, ob Name bereits in Spielerarray ohne Dopplung enthalten ist
+            if (namenAlleSpielerArrayOhneDopplung.indexOf(namenAlleSpielerArray[spielerzahl]) > -1 && dopplungNamenAlleSpielerArray.indexOf(namenAlleSpielerArray[spielerzahl]) == -1) {
+                //Eintrag in Spielerarray für doppelte Namen
+                dopplungNamenAlleSpielerArray.push(namenAlleSpielerArray[spielerzahl]);
+            }
+            namenAlleSpielerArrayOhneDopplung.push(namenAlleSpielerArray[spielerzahl]);
+        }
+        //Ausgabe der doppelten Namen, wenn vorhanden
+        if (dopplungNamenAlleSpielerArray.length > 0) {
+            alert("Es wurden Spielernamen doppelt eingegeben.\nFür eine korrekte Speicherung der Spielerergebnisse darf jeder Name nur einmal vorhanden sein. Folgende Namen sind doppelt vergeben:\n" + dopplungNamenAlleSpielerArray);
+            return (false);
+        }
+
     } else if (auswahlOhneName.checked == true) {
         //Bestimmung der Spieleranzahl aus eingetragener Zahl aus Abfragefeld
         spieleranzahl = zahlfeldAnzahlSpieler.value;
@@ -290,31 +309,40 @@ function turnierSpeichern() {
     let turniereinstellungenArray = [spieleranzahl, teamgroeße, teamanzahl, leistungsspieleranzahl, pausenspieleranzahl, spielfeldanzahl];
 
     //Eintragen aller Spielernamen (bzw. -nummern) in Turniereinstellungsarray und Spielerergebnismap
-    let spielerergebnisseMap = new Map();
+    let spielerergebnisseMap;
+    //Abruf der Spielerergebnisse-Map, wenn bereits gespeichert
+    if (localStorage.spielerergebnisse) {
+        spielerergebnisseMap = new Map(JSON.parse(localStorage.spielerergebnisse))
+    } else {
+        spielerergebnisseMap = new Map();
+    }
 
     if (leistungsspieleranzahl > 0) {
         for (let spielerzahl = 0; spielerzahl < leistungsspieleranzahl; spielerzahl++) {
             turniereinstellungenArray.push(namenLeistungsspielerArray[spielerzahl]);
-            spielerergebnisseMap.set(namenLeistungsspielerArray[spielerzahl], JSON.stringify([0, 0, 0, 0, 0]));
+
+            //wenn Spieler bereits in der Spielerergebnismap vorhanden ist, wird dieser nicht neu gespeichert
+            if (!spielerergebnisseMap.get(namenLeistungsspielerArray[spielerzahl])) {
+                spielerergebnisseMap.set(namenLeistungsspielerArray[spielerzahl], JSON.stringify([0, 0, 0, 0, 0]));
+            }
         }
     }
 
     for (let spielerzahl = 0; spielerzahl < spieleranzahl - leistungsspieleranzahl; spielerzahl++) {
         turniereinstellungenArray.push(namenSpielerArray[spielerzahl]);
-        spielerergebnisseMap.set(namenSpielerArray[spielerzahl], JSON.stringify([0, 0, 0, 0, 0]));
+
+        //wenn Spieler bereits in der Spielerergebnismap vorhanden ist, wird dieser nicht neu gespeichert
+        if (!spielerergebnisseMap.get(namenSpielerArray[spielerzahl])) {
+            spielerergebnisseMap.set(namenSpielerArray[spielerzahl], JSON.stringify([0, 0, 0, 0, 0]));
+        }
     }
 
     //Speichern des Turniereinstellungsarrays und der Spielerergebnismap im local storage
     localStorage.setItem("turniereinstellungen", JSON.stringify(turniereinstellungenArray));
     localStorage.spielerergebnisse = JSON.stringify(Array.from(spielerergebnisseMap.entries()));
 
-    //entfernen des Speicher-Buttons und Turnierimport-Buttons, einfügen des Ändern-Buttons, "neues Turnier"-Buttons und Turnierexport-Buttons
-    document.getElementById("button-initialisierung-speichern").style.display = "none";
-    document.getElementById("button-turnier-import").style.display = "none";
-    document.getElementById("button-initialisierung-aendern").style.display = "block";
-    document.getElementById("button-neues-turnier").style.display = "block";
-    document.getElementById("button-turnier-export").style.display = "block";
-
+    //Seite wird neu geladen, damit alle Felder gesperrt werden
+    location.reload();
 }
 
 //Hier werden die Spielrunden generiert und auf der Seite dargestellt.
@@ -565,7 +593,7 @@ function rundeErgebnisSpeichern() {
 
     for (let teamzahl = 1; teamzahl <= teamanzahl; teamzahl++) {
         let ergebnis = document.getElementById("ergebnis-team-" + teamzahl).value;
-        aktuelleSpielrunde[5 + spieleranzahl + teamzahl] = ergebnis;
+        aktuelleSpielrunde[5 + Number(spieleranzahl) + Number(teamzahl)] = ergebnis;
     }
 
     //speichern der Ergebnisse im Rundenarray
@@ -591,11 +619,11 @@ function rundeErgebnisSpeichern() {
         let ergebnis;
         let ergebnisGegner;
         if (i % 2 == 0) {
-            ergebnis = Number(aktuelleSpielrunde[6 + spieleranzahl + i]);
-            ergebnisGegner = Number(aktuelleSpielrunde[7 + spieleranzahl + i]);
+            ergebnis = aktuelleSpielrunde[6 + Number(spieleranzahl) + Number(i)];
+            ergebnisGegner = aktuelleSpielrunde[7 + Number(spieleranzahl) + Number(i)];
         } else {
-            ergebnis = Number(aktuelleSpielrunde[6 + spieleranzahl + i]);
-            ergebnisGegner = Number(aktuelleSpielrunde[5 + spieleranzahl + i]);
+            ergebnis = aktuelleSpielrunde[6 + Number(spieleranzahl) + Number(i)];
+            ergebnisGegner = aktuelleSpielrunde[5 + Number(spieleranzahl) + Number(i)];
         }
 
         //Berechnung der Punktedifferenz
@@ -617,7 +645,7 @@ function rundeErgebnisSpeichern() {
             //Eintrag des Sieges, wenn Spiel gewonnen
             if (ergebnis > ergebnisGegner) { spielerergebnis[1] += 1; }
             //Eintrag der Punkte des Teams
-            spielerergebnis[2] += ergebnis;
+            spielerergebnis[2] += Number(ergebnis);
             //Eintrag der Punktedifferenz
             spielerergebnis[3] += punktedifferenz;
 
