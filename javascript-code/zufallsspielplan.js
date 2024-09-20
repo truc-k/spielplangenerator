@@ -301,6 +301,9 @@ function turnierSpeichern() {
     let zahlfeldSpielfeldanzahl = document.getElementById("spielfeld-anzahl").value; //Abfragefeld für optionale Beschränkung der Spielfeldanzahl
     if (zahlfeldSpielfeldanzahl !== "") {
         spielfeldanzahl = zahlfeldSpielfeldanzahl;
+
+        //wenn die Spielfeldanzahl begrenzt wurde, gibt es eventuell Pausenspieler, obwohl eigentlich alle spielen könnten
+        pausenspieleranzahl = spieleranzahl - (teamgroeße * teamanzahl * spielfeldanzahl);
     } else {
         spielfeldanzahl = (spieleranzahl - pausenspieleranzahl) / (teamgroeße * teamanzahl);
     }
@@ -389,48 +392,60 @@ function neueRundeGenerieren() {
     //der folgenden Abschnitt kann vereinfacht geschrieben werden und das wird in Zukunft noch passieren
 
     //Bestimmung der Pausenspieler, wenn nötig
-    let pausenspielerArray; //Namen aller Pausenspieler
+    let pausenspielerArray = []; //Namen aller Pausenspieler
     if (pausenspieleranzahl > 0) {
+        let spielerergebnisseMap = new Map(JSON.parse(localStorage.spielerergebnisse)); //Abruf der Spielerergebnisse-Map
+        let namenAlleSpielerTurnierArray = Array.from(spielerergebnisseMap.keys()); //Abruf aller Spielernamen, die irgendwann mal am Turnier teilgenommen haben
+
+        let namenAlleSpielerTurnierNeuArray; //Auflistung aller Spieler, die jemals an Turnier teilgenommen haben
         //Es werden der Reihe nach alle Spieler des Turniers als Pausenspieler deklariert.
-        if (runde <= 1) {
-            //Für Runde 1
-            pausenspielerArray = namenAlleSpielerArray.splice(0, pausenspieleranzahl);
-        } else {
-            //Für jede beliebige Runde wird erst der letzte Pausenspieler der vergangenen Runde bestimmt, dann im aktuellen Gesamtspielerarray gesucht und ab diesem bis zur Zahl der Pausenspieleranzahl als Pausenspieler deklariert. Wenn das Gesamtspielerarray am Ende ist, beginnt die Pausendeklarierung wieder mit dem ersten Spieler.
+        if (spielrundenMap.get("runde-" + (runde - 1))) {
             let vorherigeSpielrundeArray = JSON.parse(spielrundenMap.get("runde-" + (runde - 1))); //Array der vorherigen Spielrunde
 
-            if (vorherigeSpielrundeArray[4] > 0) { //wenn in der vorherigen Runde Pausenspieler benannt waren, werden diese bei der Benennung der neuen Pausenspieler berücksichtigt
-                let nameLetzterPausenspieler = vorherigeSpielrundeArray[5 + vorherigeSpielrundeArray[4]]; //es wird der Name des letzten Pausenspielers aus dem Array herausgenommen
-                let naechsterPausenspielerZahl = namenAlleSpielerArray.indexOf(nameLetzterPausenspieler) + 1; //es wird der Pausenspieler im Gesamtspielerarray gesucht und die Nummer der Stelle im Array gespeichert
+            //bestimmen des Arrays zur Bestimmung der Pausenspieler
+            if (vorherigeSpielrundeArray[4] == 0) {
+                //wenn es in der vorherigen Spielrunde keine Pausenspieler gab, beginnt die Zählung mit dem ersten Spieler im Array
+                namenAlleSpielerTurnierNeuArray = namenAlleSpielerTurnierArray;
+            } else {
+                //wenn es Pausenspieler gab, wird die Stelle des letzten Pausenspielers bestimmt und an der Stelle das Array neu zusammengesetzt
+                let zahlLetzterPausenspieler = namenAlleSpielerTurnierArray.indexOf(vorherigeSpielrundeArray[5 + vorherigeSpielrundeArray[4]]); //es wird die Stelle des letzten Pausenspielers aus dem Gesamtturnierspielerarray gesucht
 
-                //Nun gibt es drei Möglichkeiten, wie die Pausenspieler bestimmt werden, abhängig von der Position des ersten Pausenspielers im Array.
-                if (naechsterPausenspielerZahl > namenAlleSpielerArray.length) {
-                    //Wenn die Zahl des ersten Pausenspielers größer ist, als die Länge des Arrays (bedeutet, der letzte Pausenspieler der vorherigen Runde war der letzte im Array), wird der erste Spieler im Gesamtarray als erster Pausenspieler festgesetzt.
-                    naechsterPausenspielerZahl = 0;
+                //nun wird das Gesamtturnierspielerarray umgestellt, damit die Spieler die bereits Pause hatten, in der Reihenfolge weiter hinten sind
+                let spielerBereitsPauseArray = namenAlleSpielerTurnierArray.splice(0, zahlLetzterPausenspieler + 1);
+                namenAlleSpielerTurnierNeuArray = namenAlleSpielerTurnierArray.concat(spielerBereitsPauseArray);
+            }
 
-                } else if (naechsterPausenspielerZahl + pausenspieleranzahl > namenAlleSpielerArray.length) {
-                    //hier wird der Fall behandelt, dass am Ende das Array kürzer ist als die benötigte Anzahl der Pausenspieler - für diesen Fall werden die letzten Spieler aus dem Array genommen und die Zählung beginnt wieder am Beginn des Arrays
-                    //die Zahl "namenAlleSpielerArray.length" muss als Konstante definiert werden, da zwei splice durchgeführt werden und beide den gleichen Wert für "namenAlleSpielerArray.length" brauchen
-                    let namenAlleSpielerArrayLength = namenAlleSpielerArray.length;
-                    pausenspielerArray = namenAlleSpielerArray.splice(naechsterPausenspielerZahl, namenAlleSpielerArrayLength - naechsterPausenspielerZahl).concat(namenAlleSpielerArray.splice(0, pausenspieleranzahl - namenAlleSpielerArrayLength + naechsterPausenspielerZahl));
-                } else {
-                    //hier werden einfach die Pausenspieler aus dem Array bestimmt, da das Array / der Rest des Arrays länger ist, als die Anzahl der Pausenspieler
-                    pausenspielerArray = namenAlleSpielerArray.splice(naechsterPausenspielerZahl, pausenspieleranzahl); //neue Pausenspieler werden aus Gesamtspielerarray herausgeholt
-                }
-            } else { //für den Fall, dass keine Pausenspieler in der vorherigen Runde benannt waren, fängt die Benennung nun in der Liste ganz vorne an
-                pausenspielerArray = namenAlleSpielerArray.splice(0, pausenspieleranzahl);
+        } else {
+            //wenn es keine vorherige Spielrunde gibt, beginnt die Zählung mit dem ersten Spieler im Array
+            namenAlleSpielerTurnierNeuArray = namenAlleSpielerTurnierArray;
+        }
+
+        //suchen des nächsten Pausenspielers, der an der aktuellen Spielrunde teilnimmt
+        let zahlNaechsterPausenspieler;
+        for (let spielerzahl = 0; spielerzahl < namenAlleSpielerTurnierNeuArray.length; spielerzahl++) {
+            if (namenAlleSpielerArray.indexOf(namenAlleSpielerTurnierNeuArray[spielerzahl]) > -1) {
+                zahlNaechsterPausenspieler = namenAlleSpielerTurnierNeuArray.indexOf(namenAlleSpielerTurnierNeuArray[spielerzahl]);
+                break;
+            }
+        }
+
+        //bestimmen der Pausenspieler
+        for (let spielerzahl = zahlNaechsterPausenspieler; spielerzahl < pausenspieleranzahl + zahlNaechsterPausenspieler; spielerzahl++) {
+            if (namenAlleSpielerArray.indexOf(namenAlleSpielerTurnierNeuArray[spielerzahl]) > -1) {
+                pausenspielerArray.push(namenAlleSpielerTurnierNeuArray[spielerzahl]);
+            }
+        }
+
+        //Nun werden aus den Einzelarrays, die für die Teamzuordnung nötig sind, die Pausenspieler entfernt.
+        for (let i = 0; i <= pausenspieleranzahl - 1; i++) {
+            if (namenSpielerArray.indexOf(pausenspielerArray[i]) > -1) {
+                namenSpielerArray.splice(namenSpielerArray.indexOf(pausenspielerArray[i]), 1);
+            } else if (namenLeistungsspielerArray.indexOf(pausenspielerArray[i]) > -1) {
+                namenLeistungsspielerArray.splice(namenLeistungsspielerArray.indexOf(pausenspielerArray[i]), 1);
             }
         }
     }
 
-    //Nun werden aus den Einzelarrays, die für die Teamzuordnung nötig sind, die Pausenspieler entfernt.
-    for (let i = 0; i <= pausenspieleranzahl - 1; i++) {
-        if (namenSpielerArray.indexOf(pausenspielerArray[i]) > -1) {
-            namenSpielerArray.splice(namenSpielerArray.indexOf(pausenspielerArray[i]), 1);
-        } else if (namenLeistungsspielerArray.indexOf(pausenspielerArray[i]) > -1) {
-            namenLeistungsspielerArray.splice(namenLeistungsspielerArray.indexOf(pausenspielerArray[i]), 1);
-        }
-    }
     //jetzt werden beide Spielernamenarrays gemischt
     for (var i = namenLeistungsspielerArray.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));

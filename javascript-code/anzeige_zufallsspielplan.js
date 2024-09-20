@@ -7,14 +7,16 @@ window.onload = function () {
 
         let container = document.getElementById("anzeige");
 
-        if (!localStorage.getItem("runde-" + runde)) {
+        let spielrundenMap = new Map(JSON.parse(localStorage.spielrunden));
+
+        if (!JSON.parse(spielrundenMap.get("runde-" + runde))) {
             let abschnittInfotext = document.createElement("p");
             abschnittInfotext.innerText = "Runde " + runde + " wurde noch nicht erstellt."
             abschnittInfotext.id = "anzeige-info";
             container.appendChild(abschnittInfotext);
         }
 
-        let anzuzeigendeSpielrunde = JSON.parse(localStorage.getItem("runde-" + runde));
+        let anzuzeigendeSpielrunde = JSON.parse(spielrundenMap.get("runde-" + runde));
 
         let spieleranzahl = anzuzeigendeSpielrunde[0];
         let teamgroeße = Number(anzuzeigendeSpielrunde[1]);
