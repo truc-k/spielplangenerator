@@ -9,11 +9,12 @@ window.onload = function () {
 
         let spielrundenMap = new Map(JSON.parse(localStorage.spielrunden));
 
-        if (!JSON.parse(spielrundenMap.get("runde-" + runde))) {
+        if (!spielrundenMap.get("runde-" + runde)) {
             let abschnittInfotext = document.createElement("p");
             abschnittInfotext.innerText = "Runde " + runde + " wurde noch nicht erstellt."
             abschnittInfotext.id = "anzeige-info";
             container.appendChild(abschnittInfotext);
+            return;
         }
 
         let anzuzeigendeSpielrunde = JSON.parse(spielrundenMap.get("runde-" + runde));

@@ -731,7 +731,16 @@ document.getElementById("anzeige-naechste-runde").addEventListener("click", anze
 function anzeigeNaechsteRunde() {
 
     let alteRunde = Number(document.getElementById("anzeige-runde").value);
+
     document.getElementById("anzeige-runde").value = alteRunde + 1;
+
+    let spielrundenMap = new Map(JSON.parse(localStorage.spielrunden));
+
+    if (!spielrundenMap.get("runde-" + (alteRunde + 1))) {
+        if (window.confirm("Es ist keine neue Runde generiert. \nSoll eine neue Runde erstellt werden?")) {
+            neueRundeGenerieren();
+        }
+    }
     anzeigefensterOeffnen();
 
 }
