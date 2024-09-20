@@ -673,6 +673,9 @@ function rundeErgebnisSpeichern() {
     //Speichern der Spielergebnis-Map im local storage
     localStorage.spielerergebnisse = JSON.stringify(Array.from(spielerergebnisseMap.entries()));
 
+    //Aktualisierung der Bestenliste
+    spielerergebnisBestenliste();
+
     //schließen des Ergebnisfensters
     //Variablen für beide Buttons, die für das Ergebnis speichern oder abbrechen benötigt werden
     let ergebnisSpeichernButton = document.getElementById("button-ergebnisse-speichern");
@@ -704,6 +707,33 @@ function rundeErgebnisAbbrechen() {
 
 }
 
+function spielerergebnisBestenliste() {
+
+    let spielerergebnisseMap = new Map(JSON.parse(localStorage.spielerergebnisse));
+    /*Aufbau des individuellen Ergebnisarrays:  [0] - Anzahl gespielte Spiele / Spielrunden
+                                                [1] - Anzahl Siege
+                                                [2] - Punkte (aus gespielten Spielen des eigenen Teams)
+                                                [3] - Punktedifferenz (aus gespielten Spielen)
+                                                [4] - Punkte aus Ergebnisbewertung (TBC)*/
+    let alleSpielerTurnierArray = Array.from(spielerergebnisseMap.keys());
+
+    //Ranking der Spieler für Siege
+    let bestenlisteSiegeArray; //Eintrag der Spielernamen in sortierter Reihenfolge entsprechend der Anzahl der Siege
+    let bestenlisteSortierungWerteArray; //Hilfsarray zur Zwischenspeicherung der Werte der Spieler, um eine Sortierung zu ermöglichen
+
+    for (let spielerzahl = 0; spielerzahl < spielerergebnisseMap.size - 1; spielerzahl++) {
+        let spielername = alleSpielerTurnierArray[spielerzahl];
+        let zahlSiege = spielerergebnisseMap.get(spielername);
+
+        //einsortieren des Ergebnis
+        for (let forVariable = 0; forVariable < bestenlisteSiegeArray.length; forVariable++) {
+            if (bestenlisteSiegeArray[forVariable].value > zahlSiege) {
+                
+            }
+        }
+    }
+}
+
 //Prüfen, ob Wert für angezeigte Runde geändert wurde
 document.getElementById("anzeige-runde").addEventListener("change", anzeigefensterOeffnen);
 
@@ -730,12 +760,17 @@ document.getElementById("anzeige-naechste-runde").addEventListener("click", anze
 
 function anzeigeNaechsteRunde() {
 
-    let alteRunde = Number(document.getElementById("anzeige-runde").value);
+    //überprüfen, ob Turnier gespeichert / angelegt ist
+    if (!localStorage.spielrunden) { alert("Es ist kein Turnier gespeichert."); return; }
 
+    //Abfrage der letzten angezeigten Runde und Anzeige der nächsten Runde in Inputbox
+    let alteRunde = Number(document.getElementById("anzeige-runde").value);
     document.getElementById("anzeige-runde").value = alteRunde + 1;
 
+    //Abruf der Spielrundenmap
     let spielrundenMap = new Map(JSON.parse(localStorage.spielrunden));
 
+    //erstellen einer neuen Spielrunde, wenn keine angelegt ist
     if (!spielrundenMap.get("runde-" + (alteRunde + 1))) {
         if (window.confirm("Es ist keine neue Runde generiert. \nSoll eine neue Runde erstellt werden?")) {
             neueRundeGenerieren();

@@ -44,3 +44,8 @@
 #button-ergebnisse-abbrechen {
     display: none;
 }
+
+[id^="bestenliste-"] {
+    float: left;
+    margin-right: 10%;
+}
