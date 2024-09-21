@@ -522,7 +522,7 @@ function rundeOeffnen(event) {
     let aufgerufeneSpielrunde = JSON.parse(spielrundenMap.get("runde-" + runde));
 
     //Turniereinstellungen aus Rundenarray abrufen
-    let spieleranzahl = aufgerufeneSpielrunde[0];
+    let spieleranzahl = Number(aufgerufeneSpielrunde[0]);
     let teamgroeße = aufgerufeneSpielrunde[1];
     let pausenspieleranzahl = aufgerufeneSpielrunde[4];
 
@@ -674,7 +674,7 @@ function rundeErgebnisSpeichern() {
     localStorage.spielerergebnisse = JSON.stringify(Array.from(spielerergebnisseMap.entries()));
 
     //Aktualisierung der Bestenliste
-    spielerergebnisBestenliste();
+    // spielerergebnisBestenliste();
 
     //schließen des Ergebnisfensters
     //Variablen für beide Buttons, die für das Ergebnis speichern oder abbrechen benötigt werden
@@ -715,23 +715,43 @@ function spielerergebnisBestenliste() {
                                                 [2] - Punkte (aus gespielten Spielen des eigenen Teams)
                                                 [3] - Punktedifferenz (aus gespielten Spielen)
                                                 [4] - Punkte aus Ergebnisbewertung (TBC)*/
+    //Namen für die Bewertungskriterien, die auf der Seite in der Bestenliste als Titel sichtbar sind
+    let ergebniskriterienArray = ["Siege", "Punkte", "Punktedifferenz", "Ergebnisbewertung"];
+
     let alleSpielerTurnierArray = Array.from(spielerergebnisseMap.keys());
 
-    //Ranking der Spieler für Siege
-    let bestenlisteSiegeArray; //Eintrag der Spielernamen in sortierter Reihenfolge entsprechend der Anzahl der Siege
-    let bestenlisteSortierungWerteArray; //Hilfsarray zur Zwischenspeicherung der Werte der Spieler, um eine Sortierung zu ermöglichen
+    for (let ergebniskriterium = 0; ergebniskriterium < ergebniskriterienArray.length; ergebniskriterium++) {
 
-    for (let spielerzahl = 0; spielerzahl < spielerergebnisseMap.size - 1; spielerzahl++) {
-        let spielername = alleSpielerTurnierArray[spielerzahl];
-        let zahlSiege = spielerergebnisseMap.get(spielername);
+        //erstellen eines Namensarrays und des dazugehörigen Wertearrays
+        let listeNamenArray = [];
+        let listeWerteArray = [];
 
-        //einsortieren des Ergebnis
-        for (let forVariable = 0; forVariable < bestenlisteSiegeArray.length; forVariable++) {
-            if (bestenlisteSiegeArray[forVariable].value > zahlSiege) {
-                
-            }
+        for (let spielerzahl = 0; spielerzahl < alleSpielerTurnierArray.length; spielerzahl++) {
+            //Eintrag der Spielernamen und Siege
+            listeNamenArray.push(alleSpielerTurnierArray[spielerzahl]);
+            listeWerteArray.push(JSON.parse(spielerergebnisseMap.get(alleSpielerTurnierArray[spielerzahl]))[ergebniskriterium + 1]);
         }
+
+        //Erstellung eines Hilfsarrays für die parallele Sortierung beider Arrays
+        let indexHilfsarray = [];
+        for (let index = 0; index < alleSpielerTurnierArray.length; index++) {
+            indexHilfsarray.push(index);
+        }
+
+        //Sortierung des Hilfsarrays entsprechend des aktuellen Ergebniskriteriums
+        indexHilfsarray.sort((a, b) => listeWerteArray[b] - listeWerteArray[a]);
+
+        //Erstellen und Ausgabe des Rankings
+        let bestenlisteNamenArray = [];
+        let bestenlisteWerteArray = [];
+        for (let spielerzahl = 0; spielerzahl < alleSpielerTurnierArray.length; spielerzahl++) {
+            bestenlisteNamenArray.push(listeNamenArray[indexHilfsarray[spielerzahl]]);
+            bestenlisteWerteArray.push(listeNamenArray[indexHilfsarray[spielerzahl]]);
+        }
+        
+        //Ausgabe des Rankings auf der Seite
     }
+    
 }
 
 //Prüfen, ob Wert für angezeigte Runde geändert wurde
