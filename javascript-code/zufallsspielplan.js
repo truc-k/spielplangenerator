@@ -816,17 +816,17 @@ function spielerergebnisAbrufen(event) {
                                                 [3] - Punktedifferenz (aus gespielten Spielen)
                                                 [4] - Punkte aus Ergebnisbewertung (TBC)*/
 
-    let spiele = JSON.parse(spielerergebnisseMap.get(spielername))[0];
-    let siege = JSON.parse(spielerergebnisseMap.get(spielername))[1];
-    let punkte = JSON.parse(spielerergebnisseMap.get(spielername))[2];
-    let punktedifferenz = JSON.parse(spielerergebnisseMap.get(spielername))[3];
-    let ergebnisbewertung = JSON.parse(spielerergebnisseMap.get(spielername))[4];
-
-    let container = document.getElementById("bestenliste");
-
+    let container = document.getElementById("spielerergebnis");
+    container.innerHTML = "";
 
     let box = document.createElement("div");
-    box.innerText = spiele + "," + siege + "," + punkte + "," + punktedifferenz + "," + ergebnisbewertung;
+    let ergebniskriterienArray = ["Spiele", "Siege", "Punkte", "Punktedifferenz", "Ergebnisbewertung"];
+
+    for (let ergebniskriterium = 0; ergebniskriterium < ergebniskriterienArray.length; ergebniskriterium++) {
+        let textzeile = document.createElement("p");
+        textzeile.innerText = ergebniskriterienArray[ergebniskriterium] + ": " + JSON.parse(spielerergebnisseMap.get(spielername))[ergebniskriterium];
+        box.appendChild(textzeile);
+    }
 
     container.appendChild(box);
 }
