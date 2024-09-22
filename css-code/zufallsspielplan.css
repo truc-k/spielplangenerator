@@ -49,3 +49,7 @@
     float: left;
     margin-right: 10%;
 }
+
+[id^="bestenliste-platzierungsabschnitt-"] {
+    display: flex;
+}

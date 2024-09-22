@@ -674,7 +674,7 @@ function rundeErgebnisSpeichern() {
     localStorage.spielerergebnisse = JSON.stringify(Array.from(spielerergebnisseMap.entries()));
 
     //Aktualisierung der Bestenliste
-    // spielerergebnisBestenliste();
+    spielerergebnisBestenliste();
 
     //schließen des Ergebnisfensters
     //Variablen für beide Buttons, die für das Ergebnis speichern oder abbrechen benötigt werden
@@ -720,6 +720,9 @@ function spielerergebnisBestenliste() {
 
     let alleSpielerTurnierArray = Array.from(spielerergebnisseMap.keys());
 
+    //clearen der Bestenliste
+    document.getElementById("bestenliste").innerHTML = "";
+
     for (let ergebniskriterium = 0; ergebniskriterium < ergebniskriterienArray.length; ergebniskriterium++) {
 
         //erstellen eines Namensarrays und des dazugehörigen Wertearrays
@@ -748,10 +751,46 @@ function spielerergebnisBestenliste() {
             bestenlisteNamenArray.push(listeNamenArray[indexHilfsarray[spielerzahl]]);
             bestenlisteWerteArray.push(listeNamenArray[indexHilfsarray[spielerzahl]]);
         }
-        
+
         //Ausgabe des Rankings auf der Seite
+        let container = document.getElementById("bestenliste");
+
+        //Eintrag der Überschrift
+        let ergebnisabschnitt = document.createElement("div");
+        ergebnisabschnitt.id = "bestenliste-" + ergebniskriterienArray[ergebniskriterium].toLocaleLowerCase();
+        let ueberschriftErgebnisabschnitt = document.createElement("p");
+        ueberschriftErgebnisabschnitt.innerText = ergebniskriterienArray[ergebniskriterium];
+        ueberschriftErgebnisabschnitt.id = "bestenliste-ueberschrift-" + ergebniskriterienArray[ergebniskriterium].toLocaleLowerCase();
+        ergebnisabschnitt.appendChild(ueberschriftErgebnisabschnitt);
+
+        let ergebnisse = document.createElement("div");
+        ergebnisse.id = "bestenliste-ergebnisse-" + ergebniskriterienArray[ergebniskriterium].toLocaleLowerCase();
+
+        for (let spielerzahl = 0; spielerzahl < bestenlisteNamenArray.length; spielerzahl++) {
+            let platzierungErgebnisabschnitt = document.createElement("div");
+            platzierungErgebnisabschnitt.id = "bestenliste-platzierungsabschnitt-" + (spielerzahl + 1);
+
+            let platzierung = document.createElement("p");
+            //überprüfen, ob vorheriger Wert kleiner ist, um Platzierung zu bestimmen
+            if (bestenlisteWerteArray[spielerzahl] > bestenlisteWerteArray[spielerzahl - 1] || bestenlisteWerteArray[spielerzahl - 1] == undefined) {
+                platzierung.innerText = "(" + (spielerzahl + 1) + ")";
+            }
+            platzierung.id = "bestenliste-platzierung-" + (spielerzahl + 1);
+
+            platzierungErgebnisabschnitt.appendChild(platzierung);
+
+            let platzierungName = document.createElement("p");
+            platzierungName.innerText = bestenlisteNamenArray[spielerzahl];
+            platzierungName.id = "bestenliste-platzierung-name-" + spielerzahl;
+            platzierungErgebnisabschnitt.appendChild(platzierungName);
+
+            ergebnisse.appendChild(platzierungErgebnisabschnitt);
+        }
+
+        ergebnisabschnitt.appendChild(ergebnisse);
+        container.appendChild(ergebnisabschnitt);
     }
-    
+
 }
 
 //Prüfen, ob Wert für angezeigte Runde geändert wurde
