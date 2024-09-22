@@ -73,6 +73,9 @@ window.onload = function () {
             leistungsspieleranzahlZahlfeld.readOnly = true;
         }
 
+        //einfügen der Bestenlisten
+        spielerergebnisBestenliste();
+
         //einblenden des Buttons für eine Turnieränderung (ausblenden des Speicher-Buttons)
         document.getElementById("button-initialisierung-speichern").style.display = "none";
         document.getElementById("button-initialisierung-aendern").style.display = "block";
@@ -782,6 +785,7 @@ function spielerergebnisBestenliste() {
             let platzierungName = document.createElement("p");
             platzierungName.innerText = bestenlisteNamenArray[spielerzahl];
             platzierungName.id = "bestenliste-platzierung-name-" + spielerzahl;
+            platzierungName.name = bestenlisteNamenArray[spielerzahl];
             platzierungErgebnisabschnitt.appendChild(platzierungName);
 
             ergebnisse.appendChild(platzierungErgebnisabschnitt);
@@ -791,6 +795,40 @@ function spielerergebnisBestenliste() {
         container.appendChild(ergebnisabschnitt);
     }
 
+}
+
+//prüfen, ob Maus über Namen bei Bestenliste ist
+document.getElementById("bestenliste").addEventListener("mouseover", spielerergebnisAbrufen);
+// document.querySelector('[id^="bestenliste-platzierung-name-"]').addEventListener("mouseover", spielerergebnisAbrufen);
+
+function spielerergebnisAbrufen(event) {
+    if (!event.target.id.includes("bestenliste-platzierung-name-")) {
+        return;
+    }
+
+    let spielername = event.target.name;
+
+    //Abruf der Spielerergebnisse aus local storage
+    let spielerergebnisseMap = new Map(JSON.parse(localStorage.spielerergebnisse));
+    /*Aufbau des individuellen Ergebnisarrays:  [0] - Anzahl gespielte Spiele / Spielrunden
+                                                [1] - Anzahl Siege
+                                                [2] - Punkte (aus gespielten Spielen des eigenen Teams)
+                                                [3] - Punktedifferenz (aus gespielten Spielen)
+                                                [4] - Punkte aus Ergebnisbewertung (TBC)*/
+
+    let spiele = JSON.parse(spielerergebnisseMap.get(spielername))[0];
+    let siege = JSON.parse(spielerergebnisseMap.get(spielername))[1];
+    let punkte = JSON.parse(spielerergebnisseMap.get(spielername))[2];
+    let punktedifferenz = JSON.parse(spielerergebnisseMap.get(spielername))[3];
+    let ergebnisbewertung = JSON.parse(spielerergebnisseMap.get(spielername))[4];
+
+    let container = document.getElementById("bestenliste");
+
+
+    let box = document.createElement("div");
+    box.innerText = spiele + "," + siege + "," + punkte + "," + punktedifferenz + "," + ergebnisbewertung;
+
+    container.appendChild(box);
 }
 
 //Prüfen, ob Wert für angezeigte Runde geändert wurde
