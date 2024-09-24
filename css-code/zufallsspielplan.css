@@ -10,6 +10,15 @@
     display: none;
 }
 
+/* #button-turnier-import {
+    background-color: lightgray;
+    color: black;
+    padding: 0.5rem;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    margin-top: 1rem;
+} */
+
 #namen-spieler {
     display: none;
     float: left;
@@ -52,4 +61,14 @@
 
 [id^="bestenliste-platzierungsabschnitt-"] {
     display: flex;
+}
+
+#spielerergebnis {
+    position: absolute;
+    display: inline-block;
+    left: 0px;
+    top: 0px;
+    padding: 5px;
+    background-color: black;
+    color: white;
 }

@@ -802,7 +802,11 @@ document.getElementById("bestenliste").addEventListener("mouseover", spielererge
 // document.querySelector('[id^="bestenliste-platzierung-name-"]').addEventListener("mouseover", spielerergebnisAbrufen);
 
 function spielerergebnisAbrufen(event) {
+
+    let container = document.getElementById("spielerergebnis");
+
     if (!event.target.id.includes("bestenliste-platzierung-name-")) {
+        container.innerHTML = "";
         return;
     }
 
@@ -816,7 +820,6 @@ function spielerergebnisAbrufen(event) {
                                                 [3] - Punktedifferenz (aus gespielten Spielen)
                                                 [4] - Punkte aus Ergebnisbewertung (TBC)*/
 
-    let container = document.getElementById("spielerergebnis");
     container.innerHTML = "";
 
     let box = document.createElement("div");
@@ -829,6 +832,7 @@ function spielerergebnisAbrufen(event) {
     }
 
     container.appendChild(box);
+
 }
 
 //Prüfen, ob Wert für angezeigte Runde geändert wurde
@@ -881,12 +885,64 @@ function anzeigeNaechsteRunde() {
 document.getElementById("button-turnier-export").addEventListener("click", turnierExport);
 
 function turnierExport() {
-    alert("Noch nicht implementiert.")
+
+    let spielerergebnisse = localStorage.spielerergebnisse;
+    let spielrunden = localStorage.spielrunden;
+    let turniereinstellungen = localStorage.getItem("turniereinstellungen");
+
+    //Abruf des aktuellen Datums und Uhrzeit
+    let currentdate = new Date();
+    var datetime = String(currentdate.getDate()).padStart(2, '0') + String((currentdate.getMonth() + 1)).padStart(2, '0') + currentdate.getFullYear() + "-" + currentdate.getHours() + currentdate.getMinutes() + currentdate.getSeconds();
+
+    let link = document.createElement("a");
+    let file = new Blob(["Spielerergebnisse:" + spielerergebnisse, "Spielrunden:" + spielrunden, "Turniereinstellungen:" + turniereinstellungen], { type: 'text/plain' });
+    link.href = URL.createObjectURL(file);
+    link.download = "turnierexport-" + datetime + ".txt";
+    link.click();
+    URL.revokeObjectURL(link.href);
 }
 
 //prüfen, ob Knopf für Turnierimport gedrückt wurde
-document.getElementById("button-turnier-import").addEventListener("click", turnierImport);
+document.getElementById("button-turnier-import").addEventListener("change", turnierImport, false);
 
 function turnierImport() {
-    alert("Noch nicht implementiert.")
+
+    let datei = document.getElementById("button-turnier-import").files[0];
+
+    //überprüfen, ob es sich um eine Turnierexport-Datei handelt (nicht sicher, es wird nur der Name geprüft)
+    if (!datei.name.includes("turnierexport-")) {
+        alert("Dies ist keine Turnierexport-Datei.");
+        return;
+    }
+
+    //Array mit den drei Speichereinheiten, die für ein Turnier gebraucht werden
+    let speicherarray = ["Spielerergebnisse", "Spielrunden", "Turniereinstellungen"];
+
+    let dateiinhalt = new FileReader();
+    dateiinhalt.onload = function () {
+
+        let turnierexportString = String(dateiinhalt.result);
+
+        for (let speichervariable = 0; speichervariable < speicherarray.length; speichervariable++) {
+
+            let suchindexStart = turnierexportString.indexOf(speicherarray[speichervariable]) + speicherarray[speichervariable].length + 1;
+
+            let localstorageDatei;
+            if (speichervariable == speicherarray.length - 1) {
+                localstorageDatei = turnierexportString.slice(suchindexStart, turnierexportString.length);
+                localStorage.setItem["turniereinstellungen", JSON.stringify(localstorageDatei)];
+            } else {
+                let suchindexEnde = turnierexportString.indexOf(speicherarray[speichervariable + 1]);
+                localstorageDatei = turnierexportString.slice(suchindexStart, suchindexEnde - 1);
+
+                if (speichervariable == 0) {
+                    localStorage.spielerergebnisse = JSON.stringify(localstorageDatei);
+                } else if (speichervariable == 1) {
+                    localStorage.spielrunden = JSON.stringify(localstorageDatei);
+                }
+            }
+
+        }
+    }
+    dateiinhalt.readAsText(this.files[0]);
 }
