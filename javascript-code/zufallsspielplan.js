@@ -775,7 +775,7 @@ function spielerergebnisBestenliste() {
 
             let platzierung = document.createElement("p");
             //überprüfen, ob vorheriger Wert kleiner ist, um Platzierung zu bestimmen
-            if (bestenlisteWerteArray[spielerzahl] > bestenlisteWerteArray[spielerzahl - 1] || bestenlisteWerteArray[spielerzahl - 1] == undefined) {
+            if (bestenlisteWerteArray[spielerzahl] < bestenlisteWerteArray[spielerzahl - 1] || bestenlisteWerteArray[spielerzahl - 1] == undefined) {
                 platzierung.innerText = "(" + (spielerzahl + 1) + ")";
             }
             platzierung.id = "bestenliste-platzierung-" + (spielerzahl + 1);
