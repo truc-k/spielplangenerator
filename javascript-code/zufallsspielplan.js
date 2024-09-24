@@ -907,6 +907,7 @@ document.getElementById("button-turnier-import").addEventListener("change", turn
 
 function turnierImport() {
 
+    //Abruf der Datei, die über Input "eingelesen" wird
     let datei = document.getElementById("button-turnier-import").files[0];
 
     //überprüfen, ob es sich um eine Turnierexport-Datei handelt (nicht sicher, es wird nur der Name geprüft)
@@ -921,7 +922,7 @@ function turnierImport() {
     let dateiinhalt = new FileReader();
     dateiinhalt.onload = function () {
 
-        let turnierexportString = String(dateiinhalt.result);
+        let turnierexportString = dateiinhalt.result;
 
         for (let speichervariable = 0; speichervariable < speicherarray.length; speichervariable++) {
 
@@ -930,19 +931,22 @@ function turnierImport() {
             let localstorageDatei;
             if (speichervariable == speicherarray.length - 1) {
                 localstorageDatei = turnierexportString.slice(suchindexStart, turnierexportString.length);
-                localStorage.setItem["turniereinstellungen", JSON.stringify(localstorageDatei)];
+                localStorage.setItem("turniereinstellungen", localstorageDatei);
             } else {
-                let suchindexEnde = turnierexportString.indexOf(speicherarray[speichervariable + 1]);
+                let suchindexEnde = turnierexportString.indexOf(speicherarray[speichervariable + 1]) + 1;
                 localstorageDatei = turnierexportString.slice(suchindexStart, suchindexEnde - 1);
 
                 if (speichervariable == 0) {
-                    localStorage.spielerergebnisse = JSON.stringify(localstorageDatei);
+                    localStorage.spielerergebnisse = localstorageDatei;
                 } else if (speichervariable == 1) {
-                    localStorage.spielrunden = JSON.stringify(localstorageDatei);
+                    localStorage.spielrunden = localstorageDatei;
                 }
             }
 
         }
     }
     dateiinhalt.readAsText(this.files[0]);
+
+    //laden aller Einstellungen auf Seite
+    location.reload();
 }
