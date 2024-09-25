@@ -752,7 +752,7 @@ function spielerergebnisBestenliste() {
         let bestenlisteWerteArray = [];
         for (let spielerzahl = 0; spielerzahl < alleSpielerTurnierArray.length; spielerzahl++) {
             bestenlisteNamenArray.push(listeNamenArray[indexHilfsarray[spielerzahl]]);
-            bestenlisteWerteArray.push(listeNamenArray[indexHilfsarray[spielerzahl]]);
+            bestenlisteWerteArray.push(listeWerteArray[indexHilfsarray[spielerzahl]]);
         }
 
         //Ausgabe des Rankings auf der Seite
