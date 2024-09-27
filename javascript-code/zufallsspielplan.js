@@ -204,8 +204,8 @@ function turnierSpeichern() {
 
     //überprüfen, ob alle erforderlichen Angaben eingetragen wurden
     //allgemeine Variablen
-    let teamgroeße = document.getElementById("teamgroeße").value; //Spieler pro Team
-    let teamanzahl = document.getElementById("teamanzahl").value; //Teams pro Spielfeld
+    let teamgroeße = Number(document.getElementById("teamgroeße").value); //Spieler pro Team
+    let teamanzahl = Number(document.getElementById("teamanzahl").value); //Teams pro Spielfeld
 
     //Felder für Turniereinstellungen mit oder ohne Namen
     let auswahlMitName = document.getElementById("mit-namen"); //Auswahlpunkt für Turnier mit Spielernamen
@@ -246,7 +246,7 @@ function turnierSpeichern() {
             namenLeistungsspielerArray = textfeldNamenLeistungsspieler.value.replace(/\r\n/g, "\n").split("\n").filter(line => line);
             leistungsspieleranzahl = namenLeistungsspielerArray.length;
         }
-        spieleranzahl = namenSpielerArray.length + leistungsspieleranzahl;
+        spieleranzahl = Number(namenSpielerArray.length + leistungsspieleranzahl);
 
         //Überprüfen, ob jeder Spielername nur einmal vorkommt (sonst Fehler mit Spielerergebnisspeicher)
         let namenAlleSpielerArray = namenLeistungsspielerArray.concat(namenSpielerArray);
@@ -269,7 +269,7 @@ function turnierSpeichern() {
 
     } else if (auswahlOhneName.checked == true) {
         //Bestimmung der Spieleranzahl aus eingetragener Zahl aus Abfragefeld
-        spieleranzahl = zahlfeldAnzahlSpieler.value;
+        spieleranzahl = Number(zahlfeldAnzahlSpieler.value);
 
         //Eintrag der Spieler in Namenarray
         for (let spielerzahl = 1; spielerzahl <= spieleranzahl; spielerzahl++) {
@@ -890,7 +890,7 @@ function turnierExport() {
 
     let spielerergebnisse = localStorage.spielerergebnisse;
     let spielrunden = localStorage.spielrunden;
-    let turniereinstellungen = localStorage.getItem("turniereinstellungen");
+    let turniereinstellungen = JSON.parse(localStorage.getItem("turniereinstellungen"));
 
     //Abruf des aktuellen Datums und Uhrzeit
     let currentdate = new Date();
