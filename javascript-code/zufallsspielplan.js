@@ -627,23 +627,23 @@ function rundeErgebnisSpeichern() {
     let spielerergebnisseMap = new Map(JSON.parse(localStorage.spielerergebnisse));
 
     //Speichern der Ergebnisse für jeden Spieler
-    for (let i = 0; i < teamanzahl; i++) { //Durchführung für Anzahl der Teams
+    for (let teamzahl = 0; teamzahl < teamanzahl; teamzahl++) { //Durchführung für Anzahl der Teams
 
         //bestimmen der Teammitglieder
         let team = [];
-        for (let t = 0; t < spieleranzahl - pausenspieleranzahl; t += teamanzahl) {
-            team.push(teamzuordnung[i + t]);
+        for (let spielerzahl = 0; spielerzahl < spieleranzahl - pausenspieleranzahl; spielerzahl += teamanzahl) {
+            team.push(teamzuordnung[teamzahl + spielerzahl]);
         }
 
         //bestimmen des Ergebnisses des Teams und des gegnerischen Ergebnisses
         let ergebnis;
         let ergebnisGegner;
-        if (i % 2 == 0) {
-            ergebnis = aktuelleSpielrunde[6 + Number(spieleranzahl) + Number(i)];
-            ergebnisGegner = aktuelleSpielrunde[7 + Number(spieleranzahl) + Number(i)];
+        if (teamzahl % 2 == 0) {
+            ergebnis = aktuelleSpielrunde[6 + Number(spieleranzahl) + Number(teamzahl)];
+            ergebnisGegner = aktuelleSpielrunde[7 + Number(spieleranzahl) + Number(teamzahl)];
         } else {
-            ergebnis = aktuelleSpielrunde[6 + Number(spieleranzahl) + Number(i)];
-            ergebnisGegner = aktuelleSpielrunde[5 + Number(spieleranzahl) + Number(i)];
+            ergebnis = aktuelleSpielrunde[6 + Number(spieleranzahl) + Number(teamzahl)];
+            ergebnisGegner = aktuelleSpielrunde[5 + Number(spieleranzahl) + Number(teamzahl)];
         }
 
         //Berechnung der Punktedifferenz
