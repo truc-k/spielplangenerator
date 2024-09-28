@@ -598,9 +598,9 @@ function rundeErgebnisSpeichern() {
     let aktuelleSpielrunde = JSON.parse(spielrundenMap.get("runde-" + runde));
 
     //Turniereinstellungen aus Rundenarray abrufen
-    let spieleranzahl = aktuelleSpielrunde[0];
-    let teamgroeße = aktuelleSpielrunde[1];
-    let pausenspieleranzahl = aktuelleSpielrunde[4];
+    let spieleranzahl = Number(aktuelleSpielrunde[0]);
+    let teamgroeße = Number(aktuelleSpielrunde[1]);
+    let pausenspieleranzahl = Number(aktuelleSpielrunde[4]);
 
     //keine Speicherung, wenn Ergebnis bereits eingetragen wurde
     if (aktuelleSpielrunde.length == 8 + spieleranzahl) {
@@ -611,9 +611,9 @@ function rundeErgebnisSpeichern() {
     //Anzahl der Teams für die Spielrunde
     let teamanzahl = (spieleranzahl - pausenspieleranzahl) / teamgroeße;
 
+    //Eintrag der Ergebnisse in Spielrundenarray
     for (let teamzahl = 1; teamzahl <= teamanzahl; teamzahl++) {
-        let ergebnis = document.getElementById("ergebnis-team-" + teamzahl).value;
-        aktuelleSpielrunde[5 + Number(spieleranzahl) + Number(teamzahl)] = ergebnis;
+        aktuelleSpielrunde[5 + spieleranzahl + teamzahl] = document.getElementById("ergebnis-team-" + teamzahl).value;
     }
 
     //speichern der Ergebnisse im Rundenarray
@@ -639,11 +639,11 @@ function rundeErgebnisSpeichern() {
         let ergebnis;
         let ergebnisGegner;
         if (teamzahl % 2 == 0) {
-            ergebnis = aktuelleSpielrunde[6 + Number(spieleranzahl) + Number(teamzahl)];
-            ergebnisGegner = aktuelleSpielrunde[7 + Number(spieleranzahl) + Number(teamzahl)];
+            ergebnis = Number(aktuelleSpielrunde[6 + spieleranzahl + teamzahl]);
+            ergebnisGegner = Number(aktuelleSpielrunde[7 + spieleranzahl + teamzahl]);
         } else {
-            ergebnis = aktuelleSpielrunde[6 + Number(spieleranzahl) + Number(teamzahl)];
-            ergebnisGegner = aktuelleSpielrunde[5 + Number(spieleranzahl) + Number(teamzahl)];
+            ergebnis = Number(aktuelleSpielrunde[6 + spieleranzahl + teamzahl]);
+            ergebnisGegner = Number(aktuelleSpielrunde[5 + spieleranzahl + teamzahl]);
         }
 
         //Berechnung der Punktedifferenz
@@ -665,7 +665,7 @@ function rundeErgebnisSpeichern() {
             //Eintrag des Sieges, wenn Spiel gewonnen
             if (ergebnis > ergebnisGegner) { spielerergebnis[1] += 1; }
             //Eintrag der Punkte des Teams
-            spielerergebnis[2] += Number(ergebnis);
+            spielerergebnis[2] += ergebnis;
             //Eintrag der Punktedifferenz
             spielerergebnis[3] += punktedifferenz;
 
