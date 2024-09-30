@@ -6,13 +6,17 @@ body {
     text-align: center;
     align-items: center;
     font-family: Arial, Helvetica, sans-serif;
+    
+    /* Horizontale mittige Ausrichtung: */
+    display: flex;
+    justify-content: center;
 }
 
 [id^="anzeige-spielfeld-"] {
     float: left;
     background-color: lightblue;
     font-weight: bold;
-    margin-right: 10vw;
+    margin-right: 5vw;
 }
 
 [id^="anzeige-team-"] {

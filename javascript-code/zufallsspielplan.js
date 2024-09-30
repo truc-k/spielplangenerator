@@ -809,6 +809,7 @@ function spielerergebnisAbrufen(event) {
 
     if (!event.target.id.includes("bestenliste-platzierung-name-")) {
         container.innerHTML = "";
+        document.getElementById("spielerergebnis").style.display = "none";
         return;
     }
 
@@ -824,16 +825,18 @@ function spielerergebnisAbrufen(event) {
 
     container.innerHTML = "";
 
-    let box = document.createElement("div");
     let ergebniskriterienArray = ["Spiele", "Siege", "Punkte", "Punktedifferenz", "Ergebnisbewertung"];
 
     for (let ergebniskriterium = 0; ergebniskriterium < ergebniskriterienArray.length; ergebniskriterium++) {
         let textzeile = document.createElement("p");
         textzeile.innerText = ergebniskriterienArray[ergebniskriterium] + ": " + JSON.parse(spielerergebnisseMap.get(spielername))[ergebniskriterium];
-        box.appendChild(textzeile);
+        container.appendChild(textzeile);
     }
 
-    container.appendChild(box);
+    //anzeigen des div an aktueller Mausposition
+    container.style.left = event.pageX + "px";
+    container.style.top = event.pageY + "px";
+    container.style.display = "block";
 
 }
 
