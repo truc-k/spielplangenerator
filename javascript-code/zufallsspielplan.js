@@ -606,7 +606,7 @@ function rundeErgebnisSpeichern() {
     //Anzahl der Teams für die Spielrunde
     let teamanzahl = (spieleranzahl - pausenspieleranzahl) / teamgroeße;
 
-    //keine Speicherung, wenn Ergebnis bereits eingetragen wurde
+    //wenn bereits Ergebnis eingetragen wurde, wird dieses erst korrigiert
     if (aktuelleSpielrunde.length == 6 + spieleranzahl + teamanzahl) {
         spielerergebnisKorrigieren();
         aktuelleSpielrunde = JSON.parse(spielrundenMap.get("runde-" + runde));
@@ -724,9 +724,19 @@ function rundeLoeschen() {
 
     //abrufen des Rundenarrays aus local Storage
     let spielrundenMap = new Map(JSON.parse(localStorage.spielrunden));
+    let aktuelleSpielrunde = JSON.parse(spielrundenMap.get("runde-" + runde));
+
+    //Turniereinstellungen aus Rundenarray abrufen
+    let spieleranzahl = Number(aktuelleSpielrunde[0]);
+    let teamgroeße = Number(aktuelleSpielrunde[1]);
+    let pausenspieleranzahl = Number(aktuelleSpielrunde[4]);
+
+    //Anzahl der Teams für die Spielrunde
+    let teamanzahl = (spieleranzahl - pausenspieleranzahl) / teamgroeße;
 
     if (window.confirm("Soll Runde " + runde + " wirklich gelöscht werden?\nDie Spielrunde wird unwiderruflich gelöscht.")) {
-        spielerergebnisKorrigieren();
+
+        if ((JSON.parse(spielrundenMap.get("runde-" + runde))).length == 6 + spieleranzahl + teamanzahl) { spielerergebnisKorrigieren(); }
         spielrundenMap.delete("runde-" + runde);
 
         //Speichern der Spielrundenmap im local Storage
