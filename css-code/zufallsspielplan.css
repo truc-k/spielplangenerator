@@ -52,6 +52,12 @@
 
 #button-ergebnisse-abbrechen {
     display: none;
+    float: left;
+}
+
+#button-runde-loeschen {
+    display: none;
+
 }
 
 [id^="bestenliste-"] {
