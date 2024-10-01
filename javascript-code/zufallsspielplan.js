@@ -204,8 +204,8 @@ function turnierSpeichern() {
 
     //überprüfen, ob alle erforderlichen Angaben eingetragen wurden
     //allgemeine Variablen
-    let teamgroeße = document.getElementById("teamgroeße").value; //Spieler pro Team
-    let teamanzahl = document.getElementById("teamanzahl").value; //Teams pro Spielfeld
+    let teamgroeße = Number(document.getElementById("teamgroeße").value); //Spieler pro Team
+    let teamanzahl = Number(document.getElementById("teamanzahl").value); //Teams pro Spielfeld
 
     //Felder für Turniereinstellungen mit oder ohne Namen
     let auswahlMitName = document.getElementById("mit-namen"); //Auswahlpunkt für Turnier mit Spielernamen
@@ -246,7 +246,7 @@ function turnierSpeichern() {
             namenLeistungsspielerArray = textfeldNamenLeistungsspieler.value.replace(/\r\n/g, "\n").split("\n").filter(line => line);
             leistungsspieleranzahl = namenLeistungsspielerArray.length;
         }
-        spieleranzahl = namenSpielerArray.length + leistungsspieleranzahl;
+        spieleranzahl = Number(namenSpielerArray.length + leistungsspieleranzahl);
 
         //Überprüfen, ob jeder Spielername nur einmal vorkommt (sonst Fehler mit Spielerergebnisspeicher)
         let namenAlleSpielerArray = namenLeistungsspielerArray.concat(namenSpielerArray);
@@ -269,7 +269,7 @@ function turnierSpeichern() {
 
     } else if (auswahlOhneName.checked == true) {
         //Bestimmung der Spieleranzahl aus eingetragener Zahl aus Abfragefeld
-        spieleranzahl = zahlfeldAnzahlSpieler.value;
+        spieleranzahl = Number(zahlfeldAnzahlSpieler.value);
 
         //Eintrag der Spieler in Namenarray
         for (let spielerzahl = 1; spielerzahl <= spieleranzahl; spielerzahl++) {
@@ -506,6 +506,7 @@ function rundeOeffnen(event) {
     //Variablen für beide Buttons, die für das Ergebnis speichern oder abbrechen benötigt werden
     let ergebnisSpeichernButton = document.getElementById("button-ergebnisse-speichern");
     let ergebnisAbbrechenButton = document.getElementById("button-ergebnisse-abbrechen");
+    let ergebnisRundeLoeschenButton = document.getElementById("button-runde-loeschen");
 
     //definieren der Sichtbarkeit des Ergebnisspeichern-Buttons 
     let ergebnisbuttonSichtbarkeit = window.getComputedStyle(ergebnisSpeichernButton);
@@ -573,7 +574,6 @@ function rundeOeffnen(event) {
             ergebnisbox.placeholder = "Ergebnis Team " + (i + 1);
         } else {
             ergebnisbox.value = aufgerufeneSpielrunde[6 + spieleranzahl + i];
-            ergebnisbox.readOnly = true;
         }
 
         container.appendChild(ergebnisbox);
@@ -582,6 +582,7 @@ function rundeOeffnen(event) {
     //anzeigen der Buttons, die für Ergebnisverarbeitung notwendig sind
     ergebnisSpeichernButton.style.display = "block";
     ergebnisAbbrechenButton.style.display = "block";
+    ergebnisRundeLoeschenButton.style.display = "block";
 
 }
 
@@ -598,22 +599,22 @@ function rundeErgebnisSpeichern() {
     let aktuelleSpielrunde = JSON.parse(spielrundenMap.get("runde-" + runde));
 
     //Turniereinstellungen aus Rundenarray abrufen
-    let spieleranzahl = aktuelleSpielrunde[0];
-    let teamgroeße = aktuelleSpielrunde[1];
-    let pausenspieleranzahl = aktuelleSpielrunde[4];
-
-    //keine Speicherung, wenn Ergebnis bereits eingetragen wurde
-    if (aktuelleSpielrunde.length == 8 + spieleranzahl) {
-        alert("Diese Runde wurde bereits gespeichert.")
-        return;
-    }
+    let spieleranzahl = Number(aktuelleSpielrunde[0]);
+    let teamgroeße = Number(aktuelleSpielrunde[1]);
+    let pausenspieleranzahl = Number(aktuelleSpielrunde[4]);
 
     //Anzahl der Teams für die Spielrunde
     let teamanzahl = (spieleranzahl - pausenspieleranzahl) / teamgroeße;
 
+    //keine Speicherung, wenn Ergebnis bereits eingetragen wurde
+    if (aktuelleSpielrunde.length == 6 + spieleranzahl + teamanzahl) {
+        spielerergebnisKorrigieren();
+        aktuelleSpielrunde = JSON.parse(spielrundenMap.get("runde-" + runde));
+    }
+
+    //Eintrag der Ergebnisse in Spielrundenarray
     for (let teamzahl = 1; teamzahl <= teamanzahl; teamzahl++) {
-        let ergebnis = document.getElementById("ergebnis-team-" + teamzahl).value;
-        aktuelleSpielrunde[5 + Number(spieleranzahl) + Number(teamzahl)] = ergebnis;
+        aktuelleSpielrunde[5 + spieleranzahl + teamzahl] = document.getElementById("ergebnis-team-" + teamzahl).value;
     }
 
     //speichern der Ergebnisse im Rundenarray
@@ -627,23 +628,23 @@ function rundeErgebnisSpeichern() {
     let spielerergebnisseMap = new Map(JSON.parse(localStorage.spielerergebnisse));
 
     //Speichern der Ergebnisse für jeden Spieler
-    for (let i = 0; i < teamanzahl; i++) { //Durchführung für Anzahl der Teams
+    for (let teamzahl = 0; teamzahl < teamanzahl; teamzahl++) { //Durchführung für Anzahl der Teams
 
         //bestimmen der Teammitglieder
         let team = [];
-        for (let t = 0; t < spieleranzahl - pausenspieleranzahl; t += teamanzahl) {
-            team.push(teamzuordnung[i + t]);
+        for (let spielerzahl = 0; spielerzahl < spieleranzahl - pausenspieleranzahl; spielerzahl += teamanzahl) {
+            team.push(teamzuordnung[teamzahl + spielerzahl]);
         }
 
         //bestimmen des Ergebnisses des Teams und des gegnerischen Ergebnisses
         let ergebnis;
         let ergebnisGegner;
-        if (i % 2 == 0) {
-            ergebnis = aktuelleSpielrunde[6 + Number(spieleranzahl) + Number(i)];
-            ergebnisGegner = aktuelleSpielrunde[7 + Number(spieleranzahl) + Number(i)];
+        if (teamzahl % 2 == 0) {
+            ergebnis = Number(aktuelleSpielrunde[6 + spieleranzahl + teamzahl]);
+            ergebnisGegner = Number(aktuelleSpielrunde[7 + spieleranzahl + teamzahl]);
         } else {
-            ergebnis = aktuelleSpielrunde[6 + Number(spieleranzahl) + Number(i)];
-            ergebnisGegner = aktuelleSpielrunde[5 + Number(spieleranzahl) + Number(i)];
+            ergebnis = Number(aktuelleSpielrunde[6 + spieleranzahl + teamzahl]);
+            ergebnisGegner = Number(aktuelleSpielrunde[5 + spieleranzahl + teamzahl]);
         }
 
         //Berechnung der Punktedifferenz
@@ -665,7 +666,7 @@ function rundeErgebnisSpeichern() {
             //Eintrag des Sieges, wenn Spiel gewonnen
             if (ergebnis > ergebnisGegner) { spielerergebnis[1] += 1; }
             //Eintrag der Punkte des Teams
-            spielerergebnis[2] += Number(ergebnis);
+            spielerergebnis[2] += ergebnis;
             //Eintrag der Punktedifferenz
             spielerergebnis[3] += punktedifferenz;
 
@@ -685,6 +686,7 @@ function rundeErgebnisSpeichern() {
     //Variablen für beide Buttons, die für das Ergebnis speichern oder abbrechen benötigt werden
     let ergebnisSpeichernButton = document.getElementById("button-ergebnisse-speichern");
     let ergebnisAbbrechenButton = document.getElementById("button-ergebnisse-abbrechen");
+    let ergebnisRundeLoeschenButton = document.getElementById("button-runde-loeschen");
 
     //aktuell sichtbare Ergebnisfenster (Teams + Ergebnisinput) werden "gelöscht" / überschrieben
     document.getElementById("ergebnisfenster").innerHTML = "";
@@ -692,6 +694,7 @@ function rundeErgebnisSpeichern() {
     //Buttons für Ergebnisverarbeitung werden nicht mehr angezeigt
     ergebnisSpeichernButton.style.display = "none";
     ergebnisAbbrechenButton.style.display = "none";
+    ergebnisRundeLoeschenButton.style.display = "none";
 }
 
 //Hier wird geprüft, ob ein Klick für den Abbruch-Button im Ergebnisfenster erfolgt
@@ -709,6 +712,111 @@ function rundeErgebnisAbbrechen() {
     //Buttons für Ergebnisverarbeitung werden nicht mehr angezeigt
     ergebnisSpeichernButton.style.display = "none";
     ergebnisAbbrechenButton.style.display = "none";
+
+}
+
+document.getElementById("button-runde-loeschen").addEventListener("click", rundeLoeschen);
+
+function rundeLoeschen() {
+
+    //abrufen der aktuellen Runde
+    let runde = document.querySelector('[id^="ergebnis-runde-"]').id.slice(15);
+
+    //abrufen des Rundenarrays aus local Storage
+    let spielrundenMap = new Map(JSON.parse(localStorage.spielrunden));
+
+    if (window.confirm("Soll Runde " + runde + " wirklich gelöscht werden?\nDie Spielrunde wird unwiderruflich gelöscht.")) {
+        spielerergebnisKorrigieren();
+        spielrundenMap.delete("runde-" + runde);
+
+        //Speichern der Spielrundenmap im local Storage
+        localStorage.spielrunden = JSON.stringify(Array.from(spielrundenMap.entries()));
+
+        //Seite wird neu geladen, damit alle Felder gesperrt werden
+        location.reload();
+    }
+
+}
+
+function spielerergebnisKorrigieren() {
+    //hier wird ein bereits eingetragenes Ergebnis aus dem Spielrundenarray gelöscht und das Spielerergebnis entsprechend korrigiert
+
+    //abrufen der aktuellen Runde
+    let runde = document.querySelector('[id^="ergebnis-runde-"]').id.slice(15);
+
+    //abrufen des Rundenarrays aus local Storage
+    let spielrundenMap = new Map(JSON.parse(localStorage.spielrunden));
+    let aktuelleSpielrunde = JSON.parse(spielrundenMap.get("runde-" + runde));
+
+    //Turniereinstellungen aus Rundenarray abrufen
+    let spieleranzahl = Number(aktuelleSpielrunde[0]);
+    let teamgroeße = Number(aktuelleSpielrunde[1]);
+    let pausenspieleranzahl = Number(aktuelleSpielrunde[4]);
+
+    //Anzahl der Teams für die Spielrunde
+    let teamanzahl = (spieleranzahl - pausenspieleranzahl) / teamgroeße;
+
+    //Array mit allen aktiven Spielern (also ohne Pausenspieler)
+    let teamzuordnung = aktuelleSpielrunde.slice(6 + pausenspieleranzahl, aktuelleSpielrunde.length);
+
+    //Map für Speicher der Spielerergebnisse
+    let spielerergebnisseMap = new Map(JSON.parse(localStorage.spielerergebnisse));
+
+    //Korrektur der Spielerergebnisse für jeden Spieler
+    for (let teamzahl = 0; teamzahl < teamanzahl; teamzahl++) {
+
+        //bestimmen der Teammitglieder
+        let team = [];
+        for (let spielerzahl = 0; spielerzahl < spieleranzahl - pausenspieleranzahl; spielerzahl += teamanzahl) {
+            team.push(teamzuordnung[teamzahl + spielerzahl]);
+        }
+
+        //bestimmen des Ergebnisses des Teams und des gegnerischen Ergebnisses
+        let ergebnis;
+        let ergebnisGegner;
+        if (teamzahl % 2 == 0) {
+            ergebnis = Number(aktuelleSpielrunde[6 + spieleranzahl + teamzahl]);
+            ergebnisGegner = Number(aktuelleSpielrunde[7 + spieleranzahl + teamzahl]);
+        } else {
+            ergebnis = Number(aktuelleSpielrunde[6 + spieleranzahl + teamzahl]);
+            ergebnisGegner = Number(aktuelleSpielrunde[5 + spieleranzahl + teamzahl]);
+        }
+
+        //Berechnung der Punktedifferenz
+        let punktedifferenz = ergebnis - ergebnisGegner;
+
+        //Ergebnis von Spielerergebnis wieder abziehen
+        /*Aufbau des individuellen Ergebnisarrays:  [0] - Anzahl gespielte Spiele / Spielrunden
+                                                    [1] - Anzahl Siege
+                                                    [2] - Punkte (aus gespielten Spielen des eigenen Teams)
+                                                    [3] - Punktedifferenz (aus gespielten Spielen)
+                                                    [4] - Punkte aus Ergebnisbewertung (TBC)*/
+
+        for (let spielerzahl = 0; spielerzahl < teamgroeße; spielerzahl++) {
+            //Abruf des Ergebnisarrays des Spielers
+            let spielerergebnis = JSON.parse(spielerergebnisseMap.get(team[spielerzahl]));
+            //gelöschte Runde abziehen
+            spielerergebnis[0] -= 1;
+            //Sieg abziehen, wenn Spiel ursprünglich gewonnen
+            if (ergebnis > ergebnisGegner) { spielerergebnis[1] -= 1; }
+            //Abzug der Punkte
+            spielerergebnis[2] -= ergebnis;
+            //Abzug der Punktedifferenz
+            spielerergebnis[3] -= punktedifferenz;
+
+            //Speichern des Spielerergebnisses in der Gesamtmap
+            spielerergebnisseMap.set(team[spielerzahl], JSON.stringify(spielerergebnis));
+        }
+    }
+
+    //Speichern der Spielergebnis-Map im local storage
+    localStorage.spielerergebnisse = JSON.stringify(Array.from(spielerergebnisseMap.entries()));
+
+    //löschen der Ergebnisse aus Spielrundenarray
+    aktuelleSpielrunde.splice(aktuelleSpielrunde.length - teamanzahl, teamanzahl);
+
+    //Speichern der Spielrunde
+    spielrundenMap.set("runde-" + runde, JSON.stringify(aktuelleSpielrunde));
 
 }
 
@@ -809,6 +917,7 @@ function spielerergebnisAbrufen(event) {
 
     if (!event.target.id.includes("bestenliste-platzierung-name-")) {
         container.innerHTML = "";
+        document.getElementById("spielerergebnis").style.display = "none";
         return;
     }
 
@@ -824,16 +933,18 @@ function spielerergebnisAbrufen(event) {
 
     container.innerHTML = "";
 
-    let box = document.createElement("div");
     let ergebniskriterienArray = ["Spiele", "Siege", "Punkte", "Punktedifferenz", "Ergebnisbewertung"];
 
     for (let ergebniskriterium = 0; ergebniskriterium < ergebniskriterienArray.length; ergebniskriterium++) {
         let textzeile = document.createElement("p");
         textzeile.innerText = ergebniskriterienArray[ergebniskriterium] + ": " + JSON.parse(spielerergebnisseMap.get(spielername))[ergebniskriterium];
-        box.appendChild(textzeile);
+        container.appendChild(textzeile);
     }
 
-    container.appendChild(box);
+    //anzeigen des div an aktueller Mausposition
+    container.style.left = event.pageX + "px";
+    container.style.top = event.pageY + "px";
+    container.style.display = "block";
 
 }
 
@@ -890,7 +1001,7 @@ function turnierExport() {
 
     let spielerergebnisse = localStorage.spielerergebnisse;
     let spielrunden = localStorage.spielrunden;
-    let turniereinstellungen = localStorage.getItem("turniereinstellungen");
+    let turniereinstellungen = JSON.parse(localStorage.getItem("turniereinstellungen"));
 
     //Abruf des aktuellen Datums und Uhrzeit
     let currentdate = new Date();
