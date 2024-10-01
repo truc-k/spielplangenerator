@@ -122,36 +122,71 @@ document.getElementById("ohne-namen").addEventListener("click", spielernamenWahl
 function spielernamenWahl() {
 
     //Deklaration der Variablen
+    //Zahlfeld für Anzahl der Leistungsgruppem
+    let anzahlLeistungsgruppen = document.getElementById("leistungsgruppenanzahl").value;
+
     //Variablen Turnier mit Spielernamen
     let auswahlMitName = document.getElementById("mit-namen"); //Auswahlpunkt für Turnier mit Spielernamen
     let textfeldNamenSpieler = document.getElementById("namen-spieler"); //Abfragefeld für Spielernamen
-    let textfeldNamenLeistungsspieler = document.getElementById("namen-leistungsspieler"); //Abfragefeld für Leistungsspielernamen
+    let abschnittNamenLeistungsspieler = document.getElementById("leistungsgruppen-namen"); //div-Feld aller Abfragefelder für Leistungsspielernamen
+    let namenLeistungsspieler = document.querySelector('[id^="namen-leistungsgruppe-"]');
 
     //Variablen Turnier ohne Spielernamen
     let auswahlOhneName = document.getElementById("ohne-namen"); //Auswahlpunkt für Turnier ohne Spielernamen
     let zahlfeldAnzahlSpieler = document.getElementById("anzahl-spieler-ohne-namen"); //Abfragefeld für Spieleranzahl
-    let zahlfeldAnzahlLeistungsspieler = document.getElementById("anzahl-leistungsspieler"); //Abfragefeld für Leistungsspieleranzahl
+    let abschnittAnzahlLeistungsspieler = document.getElementById("leistungsgruppen-zahlen"); //div-Feld aller Abfragefelder für Leistungsspieleranzahl
+    let anzahlLeistungsspieler = document.querySelector('[id^="anzahl-leistungsgruppe-"]');
 
-    //if-Bedingung prüft, ob Auswahlfeld ausgewählt wird und ob die Felder für die Anzahl der Spieler und Leistungsspieler beschrieben sind
-    if (auswahlMitName.checked == true && zahlfeldAnzahlSpieler.value == "" && zahlfeldAnzahlLeistungsspieler.value == "") { //Einstellung für Turnier mit Namen
-        //Spieler- und Leistungsspielernamen können eingetragen werden, Zahlfelder sind nicht sichtbar
+    //if-Bedingung prüft, ob Auswahlfeld ausgewählt wurde, Leistungsgruppenanzahl eingegeben wurde und ob die Felder für die Anzahl der Spieler beschrieben ist
+    if (auswahlMitName.checked == true && anzahlLeistungsgruppen >= 1 && zahlfeldAnzahlSpieler.value == "") { //Einstellung für Turnier mit Namen
+
+        //einfügen der Textfelder für die einzelnen Leistungsgruppen
+        let container = document.getElementById("leistungsgruppen-namen");
+        container.innerHTML = "";
+        for (let leistungsgruppenzahl = 1; leistungsgruppenzahl <= anzahlLeistungsgruppen; leistungsgruppenzahl++) {
+            let textfeld = document.createElement("textarea");
+            textfeld.id = "namen-leistungsgruppe-" + leistungsgruppenzahl;
+            textfeld.placeholder = "Namen der Spieler der Leistungsgruppe " + leistungsgruppenzahl;
+            textfeld.rows = "6";
+            container.appendChild(textfeld);
+        }
+
         textfeldNamenSpieler.style.display = "block";
-        textfeldNamenLeistungsspieler.style.display = "block";
         zahlfeldAnzahlSpieler.style.display = "none";
-        zahlfeldAnzahlLeistungsspieler.style.display = "none";
 
-        //else-if-Bedingung prüft, ob Auswahlfeld ausgewählt wird und ob die Felder für die Spieler- und Leistungsspielernamen beschrieben sind
-    } else if (auswahlOhneName.checked == true && textfeldNamenSpieler.value == "" && textfeldNamenLeistungsspieler.value == "") { //Einstellungen für ein Turnier ohne Namen
-        //Zahlfelder für Spieler- und Leistungsspieleranzahl können eingetragen werden, Namensfelder sind nicht sichtbar
+        abschnittNamenLeistungsspieler.style.display = "block";
+        abschnittAnzahlLeistungsspieler.style.display = "none";
+
+        //else-if-Bedingung prüft, ob Auswahlfeld ausgewählt wurde, Leistungsgruppenanzahl eingegeben wurde und ob die Felder für die Spielernamen beschrieben ist
+    } else if (auswahlOhneName.checked == true && anzahlLeistungsgruppen >= 1 && textfeldNamenSpieler.value == "") { //Einstellungen für ein Turnier ohne Namen
+
+        //einfügen der Zahlfelder für die Anzahl der Spieler pro Leistungsgruppe
+        let container = document.getElementById("leistungsgruppen-zahlen");
+        container.innerHTML = "";
+        for (let leistungsgruppenzahl = 1; leistungsgruppenzahl <= anzahlLeistungsgruppen; leistungsgruppenzahl++) {
+            let zahlfeld = document.createElement("input");
+            zahlfeld.id = "anzahl-leistungsgruppe-" + leistungsgruppenzahl;
+            zahlfeld.type = "number";
+            zahlfeld.placeholder = "davon Leistungsgruppe " + leistungsgruppenzahl;
+            container.appendChild(zahlfeld);
+        }
+
         textfeldNamenSpieler.style.display = "none";
-        textfeldNamenLeistungsspieler.style.display = "none";
         zahlfeldAnzahlSpieler.style.display = "block";
-        zahlfeldAnzahlLeistungsspieler.style.display = "block";
 
-    } else if (zahlfeldAnzahlSpieler.value != "" || zahlfeldAnzahlLeistungsspieler.value != "") {
+        abschnittNamenLeistungsspieler.style.display = "none";
+        abschnittAnzahlLeistungsspieler.style.display = "block";
+
+    } else if (!(anzahlLeistungsgruppen >= 1)) {
+        //wenn keine Anzahl an Leistungsgruppen angegeben ist, wird der Nutzer darüber informiert
+        alert("Bitte Anzahl der Leistungsgruppen angeben. Sind alle Spieler 'gleichwertig', ist dieser Wert 1.")
+        auswahlOhneName.checked = false;
+        auswahlMitName.checked = false;
+        return;
+    } else if (zahlfeldAnzahlSpieler.value != "") {
         //wenn eteas in einem Feld steht, wird die Auswahl nicht geändert
         auswahlOhneName.checked = true;
-    } else if (textfeldNamenSpieler.value != "" || textfeldNamenLeistungsspieler.value != "") {
+    } else if (textfeldNamenSpieler.value != "") {
         //wenn eteas in einem Feld steht, wird die Auswahl nicht geändert
         auswahlMitName.checked = true;
     }

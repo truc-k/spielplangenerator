@@ -24,7 +24,7 @@
     float: left;
 }
 
-#namen-leistungsspieler {
+#leistungsgruppen-namen {
     display: none;
 }
 
@@ -33,7 +33,7 @@
     float: left;
 }
 
-#anzahl-leistungsspieler {
+#leistungsgruppen-zahlen {
     display: none;
 }
 
