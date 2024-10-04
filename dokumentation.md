@@ -82,7 +82,6 @@ Map, welche die Spielrunden des Turniers speichert. Spielrunden werden mit Name 
 |2|Teamanzahl (Teams pro Spielfeld)|
 |3|Pausenspieleranzahl|
 |4|Spielfeldanzahl|
-|5|Leistungsgruppenanzahl|
 |*|Namen aller Pausenspieler|
 |*|Teamzuordnung|
 
