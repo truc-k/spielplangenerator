@@ -801,6 +801,7 @@ function rundeErgebnisAbbrechen() {
     //Variablen für beide Buttons, die für das Ergebnis speichern oder abbrechen benötigt werden
     let ergebnisSpeichernButton = document.getElementById("button-ergebnisse-speichern");
     let ergebnisAbbrechenButton = document.getElementById("button-ergebnisse-abbrechen");
+    let rundeLoeschenButton = document.getElementById("button-runde-loeschen");
 
     //aktuell sichtbare Ergebnsifenster (Teams + Ergebnisinput) werden "gelöscht" / überschrieben
     document.getElementById("ergebnisfenster").innerHTML = "";
@@ -808,6 +809,7 @@ function rundeErgebnisAbbrechen() {
     //Buttons für Ergebnisverarbeitung werden nicht mehr angezeigt
     ergebnisSpeichernButton.style.display = "none";
     ergebnisAbbrechenButton.style.display = "none";
+    rundeLoeschenButton.style.display = "none";
 
 }
 
